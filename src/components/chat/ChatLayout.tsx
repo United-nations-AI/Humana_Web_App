@@ -106,12 +106,15 @@ function ChatLayoutInner({ initialThreadId }: { initialThreadId?: string }) {
   }, [router]);
 
   const onDeleteThread = useCallback((id: string) => {
-    setThreads(p => {
-      const next = deleteThread(p, id);
+    setThreads(prev => {
+      const next = deleteThread(prev, id);
       if (activeId === id) {
         const fallback = next[0]?.id ?? null;
-        setActiveId(fallback);
-        router.replace(fallback ? `/chat/${fallback}` : "/chat");
+        // Schedule nav after render — can't call setState/router inside a reducer
+        setTimeout(() => {
+          setActiveId(fallback);
+          router.replace(fallback ? `/chat/${fallback}` : "/chat");
+        }, 0);
       }
       return next;
     });
@@ -127,12 +130,11 @@ function ChatLayoutInner({ initialThreadId }: { initialThreadId?: string }) {
     if (loading) return;
 
     let threadId = activeId;
+    let newThread: ChatThread | null = null;
+
     if (!threadId) {
-      const thread = createThread();
-      setThreads(p => [thread, ...p]);
-      setActiveId(thread.id);
-      router.push(`/chat/${thread.id}`);
-      threadId = thread.id;
+      newThread = createThread();
+      threadId = newThread.id;
     }
 
     const userMsg: Message = {
@@ -142,39 +144,55 @@ function ChatLayoutInner({ initialThreadId }: { initialThreadId?: string }) {
       timestamp: Date.now(),
     };
 
-    setThreads(p => {
-      const target = p.find(t => t.id === threadId);
-      let updated = saveMessage(p, threadId!, userMsg);
-      if (target && target.messages.length === 0) {
-        updated = setThreadTitle(updated, threadId!, (text || attachments[0]?.name || "New Chat").slice(0, 52));
-      }
-      return updated;
+    // Snapshot message history BEFORE any state update so the API gets
+    // the correct prior messages plus the one we're about to send.
+    const priorMessages = newThread
+      ? []
+      : (threads.find(t => t.id === threadId)?.messages ?? []);
+
+    const history = [...priorMessages, userMsg].slice(-20).map(m => {
+      const atts = m.attachments?.filter(a => a.type !== "audio");
+      return {
+        role: m.role,
+        content: m.content,
+        attachments: atts?.length
+          ? atts.map(a => ({
+              type: a.type, name: a.name,
+              content: a.type === "image" ? a.content : a.content.slice(0, 6000),
+            }))
+          : undefined,
+      };
     });
+
+    // Update state — no router navigation here, only state changes.
+    if (newThread) {
+      const t = newThread;
+      setThreads(p => {
+        let updated: ChatThread[] = [t, ...p];
+        updated = saveMessage(updated, t.id, userMsg);
+        updated = setThreadTitle(updated, t.id, (text || attachments[0]?.name || "New Chat").slice(0, 52));
+        return updated;
+      });
+      setActiveId(t.id);
+      // Silently update the URL without triggering a navigation/remount.
+      window.history.replaceState(null, "", `/chat/${t.id}`);
+    } else {
+      setThreads(p => {
+        const target = p.find(t => t.id === threadId);
+        let updated = saveMessage(p, threadId!, userMsg);
+        if (target && target.messages.length === 0) {
+          updated = setThreadTitle(updated, threadId!, (text || attachments[0]?.name || "New Chat").slice(0, 52));
+        }
+        return updated;
+      });
+    }
 
     setLoading(true);
 
     try {
-      const history = [
-        ...(threads.find(t => t.id === threadId)?.messages ?? []),
-        userMsg,
-      ].slice(-20).map(m => {
-        // Strip audio attachments — the transcript is already in m.content and
-        // blob: URLs are browser-local so OpenAI can't access them anyway.
-        const atts = m.attachments?.filter(a => a.type !== "audio");
-        return {
-          role: m.role,
-          content: m.content,
-          attachments: atts?.length
-            ? atts.map(a => ({
-                type: a.type, name: a.name,
-                content: a.type === "image" ? a.content : a.content.slice(0, 6000),
-              }))
-            : undefined,
-        };
-      });
-
-      const res  = await fetch("/api/chat", {
-        method: "POST", headers: { "Content-Type": "application/json" },
+      const res = await fetch("/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ messages: history, sessionId: threadId, lang }),
       });
       const data = await res.json();
@@ -183,7 +201,7 @@ function ChatLayoutInner({ initialThreadId }: { initialThreadId?: string }) {
         id: uuid(), role: "assistant", timestamp: Date.now(),
         content: data.response || "I couldn't generate a response. Please try again.",
       };
-      latestAiMsgIdRef.current = aiMsg.id; // mark as the one to auto-play
+      latestAiMsgIdRef.current = aiMsg.id;
       setThreads(p => saveMessage(p, threadId!, aiMsg));
     } catch {
       const errMsg: Message = {
@@ -194,7 +212,7 @@ function ChatLayoutInner({ initialThreadId }: { initialThreadId?: string }) {
     } finally {
       setLoading(false);
     }
-  }, [activeId, loading, threads, router, lang]);
+  }, [activeId, loading, threads, lang]);
 
   const sidebarClass = `sidebar-panel${sidebarOpen ? " sidebar-open" : " sidebar-closed"}`;
 

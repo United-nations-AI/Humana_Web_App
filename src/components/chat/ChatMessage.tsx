@@ -39,19 +39,18 @@ function useAudioPlayback() {
   const nodeRef   = useRef<AudioBufferSourceNode | null>(null);
   const startRef  = useRef(0);
   const offsetRef = useRef(0);
-  const manualRef = useRef(false);
   const rafRef    = useRef(0);
   const aliveRef  = useRef(true);
-  const durRef    = useRef(0); // mirror of duration for getProgress (no stale closure)
+  const durRef    = useRef(0);
+  // Generation counter: incremented every killNode() call.
+  // Each onended captures its own generation — stale callbacks self-discard.
+  const genRef    = useRef(0);
 
-  // Wraps the React setter so durRef stays in sync for getProgress
   const setDuration = useCallback((d: number) => {
     durRef.current = d;
     _setDuration(d);
   }, []);
 
-  // Reads AudioContext time directly — perfectly synced, no React state lag.
-  // Only valid while playing (startRef is stale when paused).
   const getProgress = useCallback((): number => {
     const ctx = ctxRef.current;
     if (!ctx || durRef.current === 0) return 0;
@@ -62,11 +61,10 @@ function useAudioPlayback() {
     aliveRef.current = true;
     return () => {
       aliveRef.current = false;
+      genRef.current++;                          // invalidate any pending onended
       cancelAnimationFrame(rafRef.current);
-      manualRef.current = true;
       try { nodeRef.current?.stop(); } catch {}
-      // Null out first to prevent any concurrent or Strict-Mode second cleanup from
-      // attempting to close the same context object again (InvalidStateError).
+      nodeRef.current = null;
       const ctx = ctxRef.current;
       ctxRef.current = null;
       if (ctx && ctx !== getSharedCtx() && ctx.state !== "closed") {
@@ -75,63 +73,73 @@ function useAudioPlayback() {
     };
   }, []);
 
-  const killNode = () => {
-    manualRef.current = true;
+  // Stops the current node and advances the generation so its onended is ignored.
+  const killNode = useCallback(() => {
+    genRef.current++;
+    cancelAnimationFrame(rafRef.current);
     try { nodeRef.current?.stop(); } catch {}
     nodeRef.current = null;
-    cancelAnimationFrame(rafRef.current);
-  };
+  }, []);
 
-  const playFromBuf = (from: number, ctx: AudioContext, buf: AudioBuffer) => {
+  const playFromBuf = useCallback((from: number, ctx: AudioContext, buf: AudioBuffer) => {
+    if (!aliveRef.current || !buf || buf.duration <= 0) return;
+
     killNode();
+    const safeFrom  = Math.max(0, Math.min(from, buf.duration));
+    const myGen     = genRef.current; // capture generation for this node's onended
 
     const startNow = () => {
-      const node = ctx.createBufferSource();
-      node.buffer = buf;
-      node.connect(ctx.destination);
-      manualRef.current = false;
+      if (genRef.current !== myGen || !aliveRef.current) return; // superseded
+      try {
+        const node = ctx.createBufferSource();
+        node.buffer = buf;
+        node.connect(ctx.destination);
 
-      node.onended = () => {
-        if (manualRef.current || !aliveRef.current) return;
-        cancelAnimationFrame(rafRef.current);
-        offsetRef.current = 0;
-        setCurrent(0);
-        setPlaying(false);
-        setEnded(true);
-      };
+        node.onended = () => {
+          // Only act if this node's generation is still the active one
+          if (genRef.current !== myGen || !aliveRef.current) return;
+          cancelAnimationFrame(rafRef.current);
+          offsetRef.current = 0;
+          setCurrent(0);
+          setPlaying(false);
+          setEnded(true);
+        };
 
-      node.start(0, from);
-      nodeRef.current  = node;
-      startRef.current = ctx.currentTime - from;
-      offsetRef.current = from;
-      setPlaying(true);
-      setEnded(false);
+        node.start(0, safeFrom);
+        nodeRef.current   = node;
+        startRef.current  = ctx.currentTime - safeFrom;
+        offsetRef.current = safeFrom;
+        setPlaying(true);
+        setEnded(false);
 
-      const dur = buf.duration;
-      const tick = () => {
-        if (!aliveRef.current) return;
-        setCurrent(Math.min(ctx.currentTime - startRef.current, dur));
+        const dur = buf.duration;
+        const tick = () => {
+          if (!aliveRef.current || genRef.current !== myGen) return;
+          setCurrent(Math.min(ctx.currentTime - startRef.current, dur));
+          rafRef.current = requestAnimationFrame(tick);
+        };
         rafRef.current = requestAnimationFrame(tick);
-      };
-      rafRef.current = requestAnimationFrame(tick);
+      } catch (e) {
+        console.warn("[VoicePlayer] playFromBuf error:", e);
+        if (genRef.current === myGen) setPlaying(false);
+      }
     };
 
     if (ctx.state === "running") {
       startNow();
-    } else {
-      // Context suspended (autoplay policy or not yet unlocked) — resume then play.
-      // On user gesture (toggle click) this succeeds; on auto-play it may stay blocked,
-      // in which case the waveform shows in paused state for manual play.
-      ctx.resume().then(() => {
-        if (aliveRef.current && ctx.state === "running") startNow();
-      }).catch(() => {});
+    } else if (ctx.state === "suspended") {
+      ctx.resume()
+        .then(() => { if (aliveRef.current) startNow(); })
+        .catch(() => { if (genRef.current === myGen) setPlaying(false); });
     }
-  };
+  }, [killNode]);
 
-  const toggle = () => {
+  const toggle = useCallback(() => {
     if (playing) {
-      const pos = ctxRef.current
-        ? Math.min(ctxRef.current.currentTime - startRef.current, duration)
+      // Capture position before killing the node
+      const ctx = ctxRef.current;
+      const pos = (ctx && ctx.state === "running")
+        ? Math.max(0, Math.min(ctx.currentTime - startRef.current, durRef.current))
         : offsetRef.current;
       offsetRef.current = pos;
       killNode();
@@ -139,34 +147,33 @@ function useAudioPlayback() {
     } else if (ctxRef.current && bufRef.current) {
       playFromBuf(offsetRef.current, ctxRef.current, bufRef.current);
     }
-  };
+  }, [playing, killNode, playFromBuf]);
 
-  const restart = () => {
+  const restart = useCallback(() => {
     if (!ctxRef.current || !bufRef.current) return;
     offsetRef.current = 0;
     setCurrent(0);
     setEnded(false);
     playFromBuf(0, ctxRef.current, bufRef.current);
-  };
+  }, [playFromBuf]);
 
-  const seek = (v: number) => {
-    if (!isFinite(v) || duration <= 0 || !ctxRef.current || !bufRef.current) return;
-    const t = Math.max(0, Math.min(v, duration));
+  const seek = useCallback((v: number) => {
+    if (!isFinite(v) || durRef.current <= 0 || !ctxRef.current || !bufRef.current) return;
+    const t = Math.max(0, Math.min(v, durRef.current));
     offsetRef.current = t;
     setCurrent(t);
-    if (ended) setEnded(false);
-    if (playing) playFromBuf(t, ctxRef.current, bufRef.current);
-  };
+    if (playing) {
+      playFromBuf(t, ctxRef.current, bufRef.current);
+    }
+  }, [playing, playFromBuf]);
 
-  // Stops audio and resets to start without replaying
   const stop = useCallback(() => {
     killNode();
     offsetRef.current = 0;
     setCurrent(0);
     setPlaying(false);
     setEnded(false);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [killNode]);
 
   return { playing, ended, current, duration, setDuration,
            ctxRef, bufRef, aliveRef, playFromBuf, toggle, restart, seek, stop, getProgress };
@@ -221,13 +228,16 @@ function WaveformPlayer({
   useEffect(() => {
     const id = myId.current;
     if (playing) {
+      // Always re-register when playing so the global transport has the freshest controls
       registerAudio(id, { toggle: stableToggle, stop: stableStop });
     } else if (ended) {
       releaseAudio(id);
     } else {
-      setAudioPlaying(id, false); // paused
+      // Only update playing state — don't release; user may resume
+      setAudioPlaying(id, false);
     }
-  }, [playing, ended, registerAudio, setAudioPlaying, releaseAudio, stableToggle, stableStop]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [playing, ended]);
 
   // Release on unmount so the transport clears if the message scrolls away
   useEffect(() => {

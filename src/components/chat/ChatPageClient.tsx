@@ -1,5 +1,6 @@
 "use client";
 import dynamic from "next/dynamic";
+import ChatDisclaimer from "./ChatDisclaimer";
 
 const ChatLayout = dynamic(() => import("./ChatLayout"), {
   ssr: false,
@@ -11,5 +12,9 @@ const ChatLayout = dynamic(() => import("./ChatLayout"), {
 });
 
 export default function ChatPageClient({ initialThreadId }: { initialThreadId?: string }) {
-  return <ChatLayout initialThreadId={initialThreadId} />;
+  return (
+    <ChatDisclaimer>
+      <ChatLayout initialThreadId={initialThreadId} />
+    </ChatDisclaimer>
+  );
 }
