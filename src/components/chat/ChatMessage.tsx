@@ -537,7 +537,7 @@ function TTSPlayer({ text, autoPlay }: { text: string; autoPlay?: boolean }) {
       <div className="tts-trigger">
         <button className="tts-listen-btn tts-listen-btn--busy" disabled>
           <div style={{ width:11, height:11, borderRadius:"50%",
-            border:"1.5px solid #E0E8F4", borderTopColor:"#1B4FD8",
+            border:"1.5px solid #E0E8F4", borderTopColor:"#3B82F6",
             animation:"spin 0.7s linear infinite" }} />
           Generating audio…
         </button>

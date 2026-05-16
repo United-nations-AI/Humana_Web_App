@@ -106,19 +106,14 @@ function ChatLayoutInner({ initialThreadId }: { initialThreadId?: string }) {
   }, [router]);
 
   const onDeleteThread = useCallback((id: string) => {
-    setThreads(prev => {
-      const next = deleteThread(prev, id);
-      if (activeId === id) {
-        const fallback = next[0]?.id ?? null;
-        // Schedule nav after render — can't call setState/router inside a reducer
-        setTimeout(() => {
-          setActiveId(fallback);
-          router.replace(fallback ? `/chat/${fallback}` : "/chat");
-        }, 0);
-      }
-      return next;
-    });
-  }, [activeId, router]);
+    const next = deleteThread(threads, id);
+    setThreads(next);
+    if (activeId === id) {
+      const fallback = next[0]?.id ?? null;
+      setActiveId(fallback);
+      router.replace(fallback ? `/chat/${fallback}` : "/chat");
+    }
+  }, [activeId, threads, router]);
 
   const clearAll = useCallback(() => {
     setThreads([]);
