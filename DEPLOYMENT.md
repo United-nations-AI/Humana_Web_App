@@ -177,6 +177,7 @@ Amplify Console → App → **Environment variables** → Add:
 - `SUPABASE_SERVICE_ROLE_KEY`
 - `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`
 - `SUPABASE_SECRET_KEY`
+- `LEARN_CERT_SECRET`
 
 #### Step 5 — Set Node version
 
@@ -328,6 +329,7 @@ App Service → **Configuration** → **Application settings** → **New applica
 - `SUPABASE_SERVICE_ROLE_KEY`
 - `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`
 - `SUPABASE_SECRET_KEY`
+- `LEARN_CERT_SECRET`
 
 Click **Save** after adding all variables.
 
@@ -465,6 +467,7 @@ All variables must be set on the hosting platform before the first deploy.
 | `SUPABASE_SERVICE_ROLE_KEY` | Yes | Server only | Supabase Dashboard → Project Settings → API → `service_role` key |
 | `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | Yes | Client + Server | Supabase Dashboard → Project Settings → API |
 | `SUPABASE_SECRET_KEY` | Yes | Server only | Supabase Dashboard → Project Settings → API |
+| `LEARN_CERT_SECRET` | Yes | Server only | Generate: `node -e "console.log(require('crypto').randomBytes(32).toString('base64url'))"` — signs learning-platform certificates. Any random string ≥ 16 chars. Changing it invalidates previously issued certificates. |
 
 > **OpenAI API Key** is set as a Supabase Edge Function secret, not in the app's environment. See [Section 1.3](#13--supabase-edge-function-secret).
 
@@ -488,6 +491,10 @@ Run through this checklist after every platform deploy:
 - [ ] Sidebar thread create, select, rename, delete all work
 - [ ] Language switcher changes the UI language
 - [ ] `/about` and `/contact` pages load
+- [ ] `/learn` loads; **Start Course** asks for a name, videos play, **Mark Complete** advances progress
+- [ ] Questionnaire is locked until all modules are complete, grades on submit, and a pass (≥ 80%) opens the certificate page (tests `/api/learn/quiz` and `LEARN_CERT_SECRET`)
+- [ ] **Download / Print PDF** on the certificate opens the print dialog with only the certificate visible
+- [ ] Response headers include `Content-Security-Policy` and `Strict-Transport-Security` (check in browser DevTools → Network)
 - [ ] HTTPS is active (padlock icon in browser)
 - [ ] Custom domain resolves correctly (both `yourdomain.com` and `www.yourdomain.com`)
 
@@ -506,4 +513,4 @@ Run through this checklist after every platform deploy:
 
 ---
 
-*Last updated: May 2026 — Humana AI v1 · Qatar CPD*
+*Last updated: September 2026 — Humana AI v1.1 (learning platform) · Qatar CPD*

@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 
 const SUPABASE_URL      = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
+const MAX_MESSAGES      = 20;                 // the client sends at most the last 20
+const MAX_BODY_BYTES    = 15 * 1024 * 1024;   // images are base64 data-URLs (files capped at 10 MB client-side)
 
 interface AttachmentPayload {
   type: string;
@@ -17,11 +19,20 @@ interface MessagePayload {
 
 export async function POST(req: NextRequest) {
   try {
+    const declared = Number(req.headers.get("content-length") ?? 0);
+    if (declared > MAX_BODY_BYTES) {
+      return NextResponse.json({ error: "Request too large" }, { status: 413 });
+    }
     const body = await req.json();
 
     // Support both legacy { message } and new { messages[] }
     const messages: MessagePayload[] = body.messages ??
       [{ role: "user", content: body.message ?? "", attachments: [] }];
+
+    if (!Array.isArray(messages) || messages.length > MAX_MESSAGES ||
+        messages.some(m => (m.role !== "user" && m.role !== "assistant") || typeof m.content !== "string")) {
+      return NextResponse.json({ error: "Invalid message payload" }, { status: 400 });
+    }
 
     const sessionId: string = body.sessionId ?? "anonymous";
     const lang: string      = body.lang ?? "en";

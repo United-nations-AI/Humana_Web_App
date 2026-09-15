@@ -14,6 +14,7 @@ const T: Record<Lang, Record<string, string>> = {
     // Nav
     nav_home: "Home",
     nav_chat: "Chat",
+    nav_learn: "Learn",
     nav_about: "About",
     nav_contact: "Contact",
     nav_terms: "Terms",
@@ -53,6 +54,7 @@ const T: Record<Lang, Record<string, string>> = {
   ar: {
     nav_home: "الرئيسية",
     nav_chat: "المحادثة",
+    nav_learn: "التعلّم",
     nav_about: "عن المنصة",
     nav_contact: "اتصل بنا",
     nav_terms: "الشروط",
@@ -86,6 +88,7 @@ const T: Record<Lang, Record<string, string>> = {
   fr: {
     nav_home: "Accueil",
     nav_chat: "Chat",
+    nav_learn: "Apprendre",
     nav_about: "À propos",
     nav_contact: "Contact",
     nav_terms: "Conditions",
@@ -119,6 +122,7 @@ const T: Record<Lang, Record<string, string>> = {
   es: {
     nav_home: "Inicio",
     nav_chat: "Chat",
+    nav_learn: "Aprender",
     nav_about: "Acerca de",
     nav_contact: "Contacto",
     nav_terms: "Términos",
@@ -152,6 +156,7 @@ const T: Record<Lang, Record<string, string>> = {
   zh: {
     nav_home: "主页",
     nav_chat: "对话",
+    nav_learn: "学习",
     nav_about: "关于",
     nav_contact: "联系",
     nav_terms: "条款",
@@ -185,6 +190,7 @@ const T: Record<Lang, Record<string, string>> = {
   hi: {
     nav_home: "होम",
     nav_chat: "चैट",
+    nav_learn: "सीखें",
     nav_about: "परिचय",
     nav_contact: "संपर्क",
     nav_terms: "नियम",

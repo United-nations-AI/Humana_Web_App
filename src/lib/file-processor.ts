@@ -69,8 +69,8 @@ function toBase64(file: File): Promise<string> {
 async function extractPdfText(file: File): Promise<string> {
   try {
     const pdfjsLib = await import("pdfjs-dist");
-    pdfjsLib.GlobalWorkerOptions.workerSrc =
-      `https://unpkg.com/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker.min.mjs`;
+    // Self-hosted worker (copied from node_modules by the postinstall script) — no third-party CDN.
+    pdfjsLib.GlobalWorkerOptions.workerSrc = "/pdf.worker.min.mjs";
 
     const buffer = await file.arrayBuffer();
     const pdf    = await pdfjsLib.getDocument({ data: buffer }).promise;

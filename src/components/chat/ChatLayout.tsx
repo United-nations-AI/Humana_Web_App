@@ -250,6 +250,7 @@ function ChatLayoutInner({ initialThreadId }: { initialThreadId?: string }) {
               <nav className="chat-header-nav">
                 <Link href="/" className="chat-nav-link">Home</Link>
                 <Link href="/chat" className="chat-nav-link active">Chat</Link>
+                <Link href="/learn" className="chat-nav-link">Learn</Link>
                 <Link href="/about" className="chat-nav-link">About</Link>
                 <Link href="/contact" className="chat-nav-link">Contact</Link>
               </nav>

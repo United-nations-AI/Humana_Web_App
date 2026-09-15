@@ -33,7 +33,7 @@ export default function Footer() {
           {/* Platform */}
           <div>
             <div className="footer-col-heading">{t("footer_platform")}</div>
-            {([["nav_cta","/chat"],["nav_about","/about"]] as [string,string][]).map(([k,h])=>(
+            {([["nav_cta","/chat"],["nav_learn","/learn"],["nav_about","/about"]] as [string,string][]).map(([k,h])=>(
               <Link key={h} href={h} className="footer-link">{k === "nav_cta" ? t("nav_chat") : t(k)}</Link>
             ))}
           </div>

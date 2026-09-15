@@ -7,6 +7,7 @@ Get your keys from the [Supabase Dashboard API Settings](https://supabase.com/da
 ```env
 NEXT_PUBLIC_SUPABASE_URL=https://mtqwroijalkjkszggnva.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=<paste anon/public key here>
+LEARN_CERT_SECRET=<any random string of 16+ characters — signs course certificates>
 ```
 
 ## 2. Apply Database Schema (One-Time)
@@ -66,6 +67,7 @@ Next.js App (Vercel / any host)
     │
     ├─ /           → Home page (hero, features, stats, CTA)
     ├─ /chat       → Full AI chat interface
+    ├─ /learn      → Learning platform (courses → modules → questionnaire → certificate)
     ├─ /about      → Mission, values, Qatar CPD
     ├─ /contact    → Contact form + channels
     └─ /terms      → Terms & Conditions
@@ -101,4 +103,5 @@ npx vercel
 # Add these env vars in Vercel dashboard:
 # NEXT_PUBLIC_SUPABASE_URL
 # NEXT_PUBLIC_SUPABASE_ANON_KEY
+# LEARN_CERT_SECRET
 ```

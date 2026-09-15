@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 const SUPABASE_URL      = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
+const MAX_AUDIO_BYTES   = 25 * 1024 * 1024; // OpenAI Whisper upload limit
 
 export async function POST(req: NextRequest) {
   try {
@@ -11,6 +12,12 @@ export async function POST(req: NextRequest) {
 
     if (!audioFile || audioFile.size === 0) {
       return NextResponse.json({ error: "No audio provided" }, { status: 400 });
+    }
+    if (audioFile.size > MAX_AUDIO_BYTES) {
+      return NextResponse.json({ error: "Recording is too long (max 25 MB)" }, { status: 413 });
+    }
+    if (!/^[a-z]{2}$/.test(lang)) {
+      return NextResponse.json({ error: "Invalid language code" }, { status: 400 });
     }
 
     // Convert audio blob → base64 for JSON transport to Supabase Edge Function

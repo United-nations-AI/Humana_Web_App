@@ -15,6 +15,7 @@ export default function Navbar() {
   const links = [
     { key: "nav_home",    href: "/" },
     { key: "nav_chat",    href: "/chat" },
+    { key: "nav_learn",   href: "/learn" },
     { key: "nav_about",   href: "/about" },
     { key: "nav_contact", href: "/contact" },
   ];
@@ -50,7 +51,7 @@ export default function Navbar() {
           {/* Desktop nav */}
           <nav className="nav-links">
             {links.map(l => (
-              <Link key={l.href} href={l.href} className={`nav-link${path === l.href ? " active" : ""}`}>
+              <Link key={l.href} href={l.href} className={`nav-link${path === l.href || (l.href !== "/" && path.startsWith(l.href)) ? " active" : ""}`}>
                 {t(l.key)}
               </Link>
             ))}
@@ -107,7 +108,7 @@ export default function Navbar() {
             <div className="nav-mobile-list">
               {links.map(l => (
                 <Link key={l.href} href={l.href} onClick={() => setOpen(false)}
-                  className={`nav-mobile-link${path === l.href ? " active" : ""}`}>
+                  className={`nav-mobile-link${path === l.href || (l.href !== "/" && path.startsWith(l.href)) ? " active" : ""}`}>
                   {t(l.key)}
                 </Link>
               ))}

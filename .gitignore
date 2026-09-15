@@ -42,3 +42,13 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# supabase CLI scratch (contains project metadata)
+supabase/.temp/
+
+# local tooling
+.claude/settings.local.json
+.sixth/
+
+# generated at install time (see postinstall script)
+/public/pdf.worker.min.mjs
