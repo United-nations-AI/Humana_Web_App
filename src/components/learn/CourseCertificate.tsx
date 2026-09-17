@@ -5,9 +5,12 @@ import { useRouter } from "next/navigation";
 import type { Course, CertificateClaim } from "@/types/learn";
 import { getProgress } from "@/lib/learn-storage";
 
-/* Certificate template: once the final artwork is supplied, set TEMPLATE_IMAGE to its path
-   (e.g. "/certificate-template.png") and the text layers will render over it. */
-const TEMPLATE_IMAGE: string | null = null;
+/* Partner logos printed on the certificate (files live in /public/certificate). */
+const LOGOS = {
+  humana: "/humanahi-logo.png",
+  qcpd:   "/certificate/qcpd-logo.jpg",
+  cpd:    "/certificate/cpd-member.png",
+};
 
 export default function CourseCertificate({ course }: { course: Course }) {
   const router = useRouter();
@@ -37,7 +40,6 @@ export default function CourseCertificate({ course }: { course: Course }) {
 
   const date  = new Date(claim.issuedAt).toLocaleDateString("en-GB", { day:"numeric", month:"long", year:"numeric" });
   const score = Math.round(claim.score * 100);
-  const lessons = course.modules.reduce((n, m) => n + m.lessons.length, 0);
 
   return (
     <div>
@@ -61,17 +63,20 @@ export default function CourseCertificate({ course }: { course: Course }) {
 
       <section style={{ background:"#F5F8FF", padding:"40px 0 64px" }} className="cert-section">
         <div className="wrap">
-          <div className="certificate" style={TEMPLATE_IMAGE ? { backgroundImage:`url(${TEMPLATE_IMAGE})` } : undefined}>
+          <div className="certificate">
             <div className="cert-border">
               <div className="cert-head">
                 <div style={{ display:"flex", alignItems:"center", gap:10 }}>
-                  <img src="/humanahi-logo.png" alt="Humana AI" style={{ width:40, height:40, objectFit:"contain", borderRadius:8 }} />
+                  <img src={LOGOS.humana} alt="Humana AI" className="cert-logo" />
                   <div>
                     <div className="cert-brand">Humana AI</div>
                     <div className="cert-brand-sub">Learning Platform · by Qatar CPD</div>
                   </div>
                 </div>
-                <div className="cert-id">No. {claim.certificateId}</div>
+                <div style={{ display:"flex", alignItems:"center", gap:14 }}>
+                  <div className="cert-id">No. {claim.certificateId}</div>
+                  <img src={LOGOS.qcpd} alt="Qatar Centre for Peace and Democracy" className="cert-logo" />
+                </div>
               </div>
 
               <div className="cert-body">
@@ -82,7 +87,7 @@ export default function CourseCertificate({ course }: { course: Course }) {
                 <div className="cert-presented">for successfully completing the course</div>
                 <div className="cert-course">{course.title}</div>
                 <div className="cert-detail">
-                  {course.modules.length} modules · {lessons} lessons · Final assessment score {score}%
+                  {course.modules.length} modules · Duration: {course.duration} · Final assessment score {score}%
                 </div>
               </div>
 
@@ -93,16 +98,12 @@ export default function CourseCertificate({ course }: { course: Course }) {
                   <div className="cert-foot-value">{date}</div>
                 </div>
                 <div className="cert-seal">
-                  <svg width="64" height="64" viewBox="0 0 64 64" fill="none">
-                    <circle cx="32" cy="32" r="30" stroke="#1B4FD8" strokeWidth="1.5" strokeDasharray="3 3"/>
-                    <circle cx="32" cy="32" r="23" stroke="#1B4FD8" strokeWidth="1.5"/>
-                    <path d="M22 32l7 7 13-14" stroke="#1B4FD8" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
-                  </svg>
+                  <img src={LOGOS.cpd} alt="CPD Member — The CPD Certification Service" className="cert-seal-img" />
                 </div>
                 <div style={{ textAlign:"right" }}>
                   <div className="cert-sig-line" />
                   <div className="cert-foot-label">Issued by</div>
-                  <div className="cert-foot-value">Qatar CPD · Humana AI</div>
+                  <div className="cert-foot-value">Qatar Centre for Peace and Democracy · Humana AI</div>
                 </div>
               </div>
             </div>

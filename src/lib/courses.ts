@@ -16,10 +16,11 @@ export const LEARN_INTRO = {
 
 export const COURSES: Course[] = [
   {
-    id: "general-human-rights",
-    title: "General Human Rights",
+    id: "foundations-of-human-rights",
+    title: "Foundations of Human Rights",
     tag: "Foundations",
     level: "Beginner",
+    duration: "2 Hours",
     summary:
       "The basics of human rights law, the foundation of international human rights, other core international laws, and the personal rights every individual holds.",
     description:

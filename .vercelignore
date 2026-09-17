@@ -1,0 +1,15 @@
+# Never upload these on a CLI deploy (vercel --prod). Vercel installs deps and builds on its side.
+.git
+node_modules
+.next
+out
+.env
+.env.local
+.env.*.local
+.vercel
+.claude
+.sixth
+supabase/.temp
+humanahi-raw.png
+*.log
+*.tsbuildinfo

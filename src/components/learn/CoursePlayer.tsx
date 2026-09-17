@@ -48,7 +48,7 @@ export default function CoursePlayer({ course }: { course: Course }) {
               <Link href="/learn" className="learn-back">← All courses</Link>
               <div style={{ display:"flex", gap:10, alignItems:"center", marginTop:10, marginBottom:8 }}>
                 <span className="tag">{course.tag}</span>
-                <span className="mono-label" style={{ color:"#A8BEDB" }}>{course.level}</span>
+                <span className="mono-label" style={{ color:"#A8BEDB" }}>{course.level} · {course.duration}</span>
               </div>
               <h1 className="heading-2" style={{ color:"#0C1228" }}>{course.title}</h1>
             </div>

@@ -52,3 +52,6 @@ supabase/.temp/
 
 # generated at install time (see postinstall script)
 /public/pdf.worker.min.mjs
+
+# Windows metadata sidecars
+*:Zone.Identifier

@@ -26,6 +26,7 @@ export interface Course {
   title: string;
   tag: string;            // short pill label e.g. "Foundations"
   level: "Beginner" | "Intermediate" | "Advanced";
+  duration: string;       // e.g. "2 Hours" — printed on the certificate
   summary: string;        // one-liner for the catalog card
   description: string;    // longer text on the course page
   outcomes: string[];     // "What you will learn" bullets

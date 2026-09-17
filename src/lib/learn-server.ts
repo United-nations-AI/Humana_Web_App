@@ -9,7 +9,7 @@ import { getCourse, allLessons } from "./courses";
 
 /** courseId → questionId → index of the correct option */
 export const QUIZ_ANSWERS: Record<string, Record<string, number>> = {
-  "general-human-rights": {
+  "foundations-of-human-rights": {
     q01: 1,
     q02: 2,
     q03: 1,

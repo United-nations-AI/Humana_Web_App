@@ -116,6 +116,8 @@ export default function LearnCatalog() {
                     <span>·</span>
                     <span>{total} videos</span>
                     <span>·</span>
+                    <span>{c.duration}</span>
+                    <span>·</span>
                     <span>{hasQuiz(c) ? `${c.quiz.length} questions` : "Questionnaire soon"}</span>
                   </div>
 
