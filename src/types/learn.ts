@@ -59,4 +59,8 @@ export interface CourseProgress {
   certificateId?: string;
   /** server-issued token (claim + signature); the only thing that unlocks the certificate page */
   certToken?: string;
+  /** set once the learner has used Download / Print — unlocks the feedback form */
+  certificateDownloaded?: boolean;
+  /** epoch ms when the post-course feedback form was submitted */
+  feedbackSubmittedAt?: number;
 }

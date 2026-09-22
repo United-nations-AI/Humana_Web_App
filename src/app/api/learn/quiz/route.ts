@@ -13,6 +13,9 @@ export async function POST(req: NextRequest) {
       courseId: body.courseId, name: body.name, answers: body.answers, completedLessons: body.completedLessons,
     });
     if (!r.ok) return NextResponse.json({ error: r.error }, { status: r.status });
+    // NOTE: assessment tracking is intentionally NOT connected. To enable later, import
+    // `recordAssessment` from "@/lib/learn-server", call it here, run migration 003,
+    // and set LEARN_DB_TRACKING=on.
     return NextResponse.json(r);
   } catch (e) {
     console.error("Quiz grading error:", e);

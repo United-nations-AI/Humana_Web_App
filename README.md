@@ -31,6 +31,7 @@ NEXT_PUBLIC_SUPABASE_URL=https://<your-project-ref>.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=<your-anon-key>
 SUPABASE_SERVICE_ROLE_KEY=<your-service-role-key>
 LEARN_CERT_SECRET=<random-string-16+chars>
+LEARN_ADMIN_KEY=<random-string-16+chars>
 ```
 
 > `LEARN_CERT_SECRET` signs learning-platform certificates. Generate one with
@@ -80,6 +81,8 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 | `/api/tts` | POST — text → speech via Supabase Edge Function |
 | `/api/learn/quiz` | POST — grades a questionnaire server-side, issues a signed certificate token on a pass |
 | `/api/learn/certificate` | POST — verifies a certificate token |
+| `/admin/learn` | Admin dashboard: exam attempts, students, certificates issued (needs `LEARN_ADMIN_KEY`) |
+| `/api/admin/learn-stats` | GET — statistics JSON, `Authorization: Bearer <LEARN_ADMIN_KEY>` |
 
 ---
 
@@ -135,6 +138,10 @@ scripts/
 1. Add the course, modules, lessons (YouTube links) and questions in `src/lib/courses.ts`. Questions carry no answers.
 2. Add the matching answer key (`questionId → correct option index`) in `src/lib/learn-server.ts` under `QUIZ_ANSWERS`.
 3. `passMark` on the course sets the pass threshold (0.8 = 80%). Scores of 60–79% show "Retake recommended", below 60% "Review course content".
+
+## Admin Dashboard
+
+Every graded questionnaire is recorded in the Supabase table `learn_assessments` (created by `supabase/migrations/003_learn_assessments.sql` — run it once in the SQL editor). Open `/admin/learn` and enter `LEARN_ADMIN_KEY` to see attempts, students who attempted and passed, certificates issued, pass rate, and the latest 100 attempts. The same data is visible in Supabase → Table Editor, and the `learn_course_stats` view gives per-course totals.
 
 ## Security Notes
 

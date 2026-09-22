@@ -3,18 +3,34 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import type { Course, CertificateClaim } from "@/types/learn";
-import { getProgress } from "@/lib/learn-storage";
+import { getProgress, markCertificateDownloaded } from "@/lib/learn-storage";
+import CourseFeedback from "./CourseFeedback";
 
 /* Partner logos printed on the certificate (files live in /public/certificate). */
 const LOGOS = {
   humana: "/humanahi-logo.png",
   qcpd:   "/certificate/qcpd-logo.jpg",
   cpd:    "/certificate/cpd-member.png",
+  signature: "/certificate/signature.png",
 };
 
 export default function CourseCertificate({ course }: { course: Course }) {
   const router = useRouter();
   const [claim, setClaim] = useState<CertificateClaim | null>(null);
+  // Feedback form is shown only after the certificate has been downloaded/printed
+  const [downloaded, setDownloaded] = useState(() => !!getProgress(course.id).certificateDownloaded);
+  const [feedbackDone, setFeedbackDone] = useState(() => !!getProgress(course.id).feedbackSubmittedAt);
+
+  const download = () => {
+    const unlock = () => {
+      markCertificateDownloaded(course.id);
+      setDownloaded(true);
+      window.removeEventListener("afterprint", unlock);
+      setTimeout(() => document.getElementById("feedback")?.scrollIntoView({ behavior: "smooth" }), 300);
+    };
+    window.addEventListener("afterprint", unlock);
+    window.print();
+  };
 
   // The certificate renders only from a server-verified token issued after a passing quiz.
   // Editing localStorage or typing this URL directly cannot produce one.
@@ -53,7 +69,7 @@ export default function CourseCertificate({ course }: { course: Course }) {
             </div>
             <div style={{ display:"flex", gap:8, flexWrap:"wrap" }}>
               <Link href="/learn" className="btn-outline" style={{ fontSize:13, padding:"10px 16px" }}>More Courses</Link>
-              <button onClick={() => window.print()} className="btn-primary" style={{ fontSize:13, padding:"10px 18px" }}>
+              <button onClick={download} className="btn-primary" style={{ fontSize:13, padding:"10px 18px" }}>
                 Download / Print PDF
               </button>
             </div>
@@ -73,10 +89,7 @@ export default function CourseCertificate({ course }: { course: Course }) {
                     <div className="cert-brand-sub">Learning Platform · by Qatar CPD</div>
                   </div>
                 </div>
-                <div style={{ display:"flex", alignItems:"center", gap:14 }}>
-                  <div className="cert-id">No. {claim.certificateId}</div>
-                  <img src={LOGOS.qcpd} alt="Qatar Centre for Peace and Democracy" className="cert-logo" />
-                </div>
+                <img src={LOGOS.qcpd} alt="Qatar Centre for Peace and Democracy" className="cert-logo" />
               </div>
 
               <div className="cert-body">
@@ -92,20 +105,24 @@ export default function CourseCertificate({ course }: { course: Course }) {
               </div>
 
               <div className="cert-foot">
-                <div>
-                  <div className="cert-sig-line" />
+                <div className="cert-foot-col">
                   <div className="cert-foot-label">Date of Completion</div>
-                  <div className="cert-foot-value">{date}</div>
+                  <div className="cert-foot-value cert-date">{date}</div>
                 </div>
-                <div className="cert-seal">
+                <div className="cert-foot-col">
+                  <img src={LOGOS.signature} alt="Authorised signature" className="cert-signature" />
+                  <div className="cert-sig-line" />
+                  <div className="cert-foot-label">Authorised Signature</div>
+                  <div className="cert-foot-value">Qatar Centre for Peace and Democracy</div>
+                </div>
+                <div className="cert-foot-col">
                   <img src={LOGOS.cpd} alt="CPD Member — The CPD Certification Service" className="cert-seal-img" />
-                </div>
-                <div style={{ textAlign:"right" }}>
                   <div className="cert-sig-line" />
                   <div className="cert-foot-label">Issued by</div>
-                  <div className="cert-foot-value">Qatar Centre for Peace and Democracy · Humana AI</div>
+                  <div className="cert-foot-value">Humana AI · Qatar CPD</div>
                 </div>
               </div>
+              <div className="cert-serial">Certificate No. {claim.certificateId}</div>
             </div>
           </div>
 
@@ -114,6 +131,29 @@ export default function CourseCertificate({ course }: { course: Course }) {
           </p>
         </div>
       </section>
+
+      {downloaded && !feedbackDone && (
+        <CourseFeedback course={course} certificateId={claim.certificateId} completedAt={claim.issuedAt}
+          onSubmitted={() => { setFeedbackDone(true); window.scrollTo({ top: 0, behavior: "smooth" }); }} />
+      )}
+
+      {downloaded && feedbackDone && (
+        <section className="no-print" style={{ background:"#fff", padding:"48px 0 64px", borderTop:"1px solid #E0E8F4" }}>
+          <div className="wrap" style={{ maxWidth:820 }}>
+            <div className="learn-callout" style={{ marginTop:0, background:"rgba(22,163,74,0.06)", borderColor:"rgba(22,163,74,0.3)" }}>
+              <div>
+                <div className="label-xs" style={{ color:"#16A34A", marginBottom:6 }}>Thank you</div>
+                <div className="heading-3" style={{ fontSize:16, color:"#0C1228", marginBottom:6 }}>
+                  Thank you for your feedback and for participating in the Humana AI Human Rights Learning Programme.
+                </div>
+                <p className="body-text" style={{ fontSize:14, color:"#64748B" }}>
+                  Your feedback helps us continue improving and providing accessible human rights education free of charge.
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
     </div>
   );
 }

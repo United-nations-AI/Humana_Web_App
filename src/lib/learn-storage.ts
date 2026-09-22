@@ -64,6 +64,19 @@ export function recordQuizResult(
   return p;
 }
 
+export function markCertificateDownloaded(courseId: string): CourseProgress {
+  const p = getProgress(courseId);
+  if (!p.certificateDownloaded) { p.certificateDownloaded = true; saveProgress(courseId, p); }
+  return p;
+}
+
+export function markFeedbackSubmitted(courseId: string): CourseProgress {
+  const p = getProgress(courseId);
+  p.feedbackSubmittedAt = Date.now();
+  saveProgress(courseId, p);
+  return p;
+}
+
 export function resetCourse(courseId: string): void {
   const all = readAll();
   delete all[courseId];

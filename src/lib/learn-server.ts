@@ -4,6 +4,7 @@
    - Grades submissions and issues HMAC-signed certificate tokens.
    ──────────────────────────────────────────────────────────────────────────── */
 import { createHmac, timingSafeEqual } from "node:crypto";
+import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 import type { CertificateClaim } from "@/types/learn";
 import { getCourse, allLessons } from "./courses";
 
@@ -138,4 +139,127 @@ export function gradeSubmission(input: {
     result.token = issueToken(claim);
   }
   return result;
+}
+
+/* ── Assessment tracking (Supabase, service role — never exposed to the client) ──
+   NOT CONNECTED: nothing in the request paths calls recordAssessment / recordFeedback yet.
+   The functions, migrations 003/004 and the /admin/learn dashboard are kept ready for later. */
+
+/** Master switch for writing learning data to Supabase. Set LEARN_DB_TRACKING=on to enable; anything else = local only. */
+export const dbTrackingEnabled = () => process.env.LEARN_DB_TRACKING === "on";
+
+let _admin: SupabaseClient | null = null;
+function adminDb(): SupabaseClient | null {
+  if (!dbTrackingEnabled()) return null;
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (!url || !key) return null;
+  return (_admin ??= createClient(url, key, { auth: { persistSession: false } }));
+}
+
+/** Fire-and-forget: log a graded attempt. Never throws — a logging failure must not block the learner. */
+export async function recordAssessment(input: {
+  courseId: string; name: string; result: GradeResult;
+}): Promise<void> {
+  const db = adminDb();
+  if (!db) return;
+  const { error } = await db.from("learn_assessments").insert({
+    course_id:      input.courseId,
+    learner_name:   input.name,
+    correct:        input.result.correct,
+    total:          input.result.total,
+    score:          input.result.score,
+    passed:         input.result.passed,
+    band:           input.result.band,
+    certificate_id: input.result.claim?.certificateId ?? null,
+  });
+  if (error) console.error("[learn] could not record assessment:", error.message);
+}
+
+export interface LearnStats {
+  totals: { attempts: number; learners: number; passedAttempts: number; learnersPassed: number; certificates: number; avgScorePct: number | null };
+  courses: { course_id: string; attempts: number; learners: number; passed_attempts: number; learners_passed: number; certificates_issued: number; avg_score_pct: number | null; last_attempt_at: string | null }[];
+  recent:  { id: string; course_id: string; learner_name: string; correct: number; total: number; score: number; passed: boolean; band: string; certificate_id: string | null; created_at: string }[];
+}
+
+export async function getLearnStats(): Promise<LearnStats> {
+  if (!dbTrackingEnabled()) throw new Error('Database tracking is switched off (LEARN_DB_TRACKING is not "on"). No assessment data is being recorded.');
+  const db = adminDb();
+  if (!db) throw new Error("Supabase service credentials are not configured");
+  const [courses, recent] = await Promise.all([
+    db.from("learn_course_stats").select("*"),
+    db.from("learn_assessments").select("*").order("created_at", { ascending: false }).limit(100),
+  ]);
+  if (courses.error) throw new Error(courses.error.message);
+  if (recent.error)  throw new Error(recent.error.message);
+  const rows = (courses.data ?? []) as LearnStats["courses"];
+  const sum = (k: keyof LearnStats["courses"][number]) => rows.reduce((n, r) => n + Number(r[k] ?? 0), 0);
+  const totalAttempts = sum("attempts");
+  const avg = totalAttempts ? rows.reduce((n, r) => n + Number(r.avg_score_pct ?? 0) * Number(r.attempts), 0) / totalAttempts : null;
+  return {
+    totals: {
+      attempts: totalAttempts, learners: sum("learners"), passedAttempts: sum("passed_attempts"),
+      learnersPassed: sum("learners_passed"), certificates: sum("certificates_issued"),
+      avgScorePct: avg === null ? null : Math.round(avg * 10) / 10,
+    },
+    courses: rows,
+    recent: (recent.data ?? []) as LearnStats["recent"],
+  };
+}
+
+/** Constant-time check of the admin dashboard key from an Authorization: Bearer header. */
+export function isAdminAuthorised(authHeader: string | null): boolean {
+  const expected = process.env.LEARN_ADMIN_KEY;
+  if (!expected || expected.length < 16) return false;
+  const token = authHeader?.startsWith("Bearer ") ? authHeader.slice(7).trim() : "";
+  const a = Buffer.from(token), b = Buffer.from(expected);
+  return a.length === b.length && timingSafeEqual(a, b);
+}
+
+/* ── Course feedback ─────────────────────────────────────────────────────── */
+
+export interface FeedbackSubmission {
+  courseId: string;
+  certificateId: string | null;
+  ratings: Record<string, number>;   // q1..q6 → 1..5
+  overall: string;                   // Poor | Fair | Good | Very Good | Excellent
+  recommend: string;                 // Yes | Maybe | No
+  mostUseful: string;
+  improve: string;
+}
+
+const OVERALL   = ["Poor", "Fair", "Good", "Very Good", "Excellent"];
+const RECOMMEND = ["Yes", "Maybe", "No"];
+const RATING_KEYS = ["q1", "q2", "q3", "q4", "q5", "q6"];
+
+export function validateFeedback(body: unknown): FeedbackSubmission | { error: string } {
+  const b = (body && typeof body === "object") ? body as Record<string, unknown> : {};
+  if (typeof b.courseId !== "string" || !getCourse(b.courseId)) return { error: "Unknown course" };
+  const ratings: Record<string, number> = {};
+  const raw = (b.ratings && typeof b.ratings === "object") ? b.ratings as Record<string, unknown> : {};
+  for (const k of RATING_KEYS) {
+    const v = Number(raw[k]);
+    if (!Number.isInteger(v) || v < 1 || v > 5) return { error: "Please rate every statement from 1 to 5" };
+    ratings[k] = v;
+  }
+  if (!OVERALL.includes(String(b.overall)))     return { error: "Please choose an overall rating" };
+  if (!RECOMMEND.includes(String(b.recommend))) return { error: "Please say whether you would recommend the course" };
+  const clean = (v: unknown) => (typeof v === "string" ? v.trim().slice(0, 2000) : "");
+  return {
+    courseId: b.courseId, certificateId: typeof b.certificateId === "string" ? b.certificateId.slice(0, 40) : null,
+    ratings, overall: String(b.overall), recommend: String(b.recommend),
+    mostUseful: clean(b.mostUseful), improve: clean(b.improve),
+  };
+}
+
+/** Stores feedback when DB tracking is on; otherwise a no-op (local-only mode). Never throws. */
+export async function recordFeedback(f: FeedbackSubmission): Promise<"stored" | "local-only"> {
+  const db = adminDb();
+  if (!db) return "local-only";
+  const { error } = await db.from("learn_feedback").insert({
+    course_id: f.courseId, certificate_id: f.certificateId, ratings: f.ratings,
+    overall: f.overall, recommend: f.recommend, most_useful: f.mostUseful || null, improve: f.improve || null,
+  });
+  if (error) { console.error("[learn] could not record feedback:", error.message); return "local-only"; }
+  return "stored";
 }

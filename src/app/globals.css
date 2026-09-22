@@ -2019,12 +2019,23 @@ body {
 .cert-detail { font-size: clamp(8px, 1vw, 10px); color: #A8BEDB; letter-spacing: 0.08em; margin-top: 6px; }
 .cert-foot { display: flex; justify-content: space-between; align-items: flex-end; gap: 12px; }
 .cert-sig-line { width: clamp(100px, 18vw, 180px); height: 1px; background: #1E293B; margin-bottom: 8px; }
-.cert-foot > div:last-child .cert-sig-line { margin-left: auto; }
 .cert-foot-label { font-size: 8px; color: #A8BEDB; margin-bottom: 3px; }
 .cert-foot-value { font-family: 'Space Grotesk', Arial, sans-serif; font-size: clamp(10px, 1.3vw, 13px); font-weight: 600; color: #1E293B; letter-spacing: -0.01em; }
 .cert-seal { flex-shrink: 0; }
-.cert-logo { width: clamp(28px, 4.5vw, 44px); height: clamp(28px, 4.5vw, 44px); object-fit: contain; border-radius: 8px; }
-.cert-seal-img { width: clamp(44px, 7vw, 72px); height: clamp(44px, 7vw, 72px); object-fit: contain; }
+.cert-logo { width: clamp(38px, 6.2vw, 60px); height: clamp(38px, 6.2vw, 60px); object-fit: contain; border-radius: 8px; }
+.cert-seal-img { display: block; width: clamp(60px, 9.6vw, 98px); height: clamp(60px, 9.6vw, 98px); object-fit: contain; margin: 0 auto 2px; }
+.cert-signature {
+  display: block; margin: 0 auto -8px; height: clamp(40px, 6vw, 68px); width: auto; max-width: 200px; object-fit: contain;
+}
+.cert-foot { align-items: flex-end; }
+.cert-foot-col { text-align: center; flex: 1 1 0; min-width: 0; }
+.cert-foot-col .cert-sig-line { margin-left: auto; margin-right: auto; }
+.cert-date { font-size: clamp(13px, 1.7vw, 18px); font-weight: 700; color: #0C1228; letter-spacing: -0.02em; margin-top: 2px; }
+.cert-serial {
+  text-align: center; margin-top: clamp(10px, 1.6vw, 18px);
+  font-family: 'JetBrains Mono', 'Courier New', monospace; font-size: clamp(8px, 1vw, 10px); font-weight: 500;
+  letter-spacing: 0.12em; text-transform: uppercase; color: #A8BEDB;
+}
 
 /* Print: certificate only, landscape */
 @media print {
@@ -2081,6 +2092,62 @@ body {
   .cert-border { gap: 22px; }
   .cert-head { flex-wrap: wrap; justify-content: center; text-align: center; gap: 14px; }
   .cert-foot { flex-direction: column; align-items: center; text-align: center; gap: 18px; }
-  .cert-foot > div:last-child { text-align: center; }
+  .cert-foot-col { width: 100%; }
   .cert-sig-line { margin-left: auto; margin-right: auto; }
 }
+
+/* ─── Admin dashboard ─── */
+.admin-tiles { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+@media (min-width: 640px)  { .admin-tiles { grid-template-columns: repeat(3, 1fr); } }
+@media (min-width: 1024px) { .admin-tiles { grid-template-columns: repeat(6, 1fr); } }
+.admin-table-wrap { overflow-x: auto; border: 1px solid #E0E8F4; border-radius: 8px; }
+.admin-table { width: 100%; border-collapse: collapse; font-family: 'Space Grotesk', Arial, sans-serif; font-size: 13px; color: #1E293B; }
+.admin-table th {
+  text-align: left; padding: 10px 14px; background: #F5F8FF; border-bottom: 1px solid #E0E8F4;
+  font-family: 'JetBrains Mono', 'Courier New', monospace; font-size: 9px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: #64748B;
+  white-space: nowrap;
+}
+.admin-table td { padding: 10px 14px; border-bottom: 1px solid #E0E8F4; vertical-align: middle; }
+.admin-table tr:last-child td { border-bottom: none; }
+.admin-table tr:hover td { background: #FAFCFF; }
+.admin-mono { font-family: 'JetBrains Mono', 'Courier New', monospace; font-size: 11px; color: #64748B; white-space: nowrap; }
+.admin-empty { text-align: center; color: #A8BEDB; padding: 28px 14px !important; }
+.admin-badge {
+  display: inline-block; padding: 3px 9px; border-radius: 4px;
+  font-family: 'JetBrains Mono', 'Courier New', monospace; font-size: 9px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase;
+}
+.admin-badge.pass   { background: rgba(22,163,74,0.1);  color: #16A34A; }
+.admin-badge.retake { background: rgba(245,158,11,0.12); color: #B45309; }
+.admin-badge.review { background: rgba(239,68,68,0.08);  color: #DC2626; }
+
+/* ─── Course feedback form ─── */
+.feedback-meta {
+  display: grid; grid-template-columns: 1fr; gap: 12px; margin-bottom: 28px;
+  padding: 16px 18px; background: #F5F8FF; border: 1px solid #E0E8F4; border-radius: 8px;
+}
+@media (min-width: 560px) { .feedback-meta { grid-template-columns: 1fr 1fr; } }
+.feedback-meta .form-label { display: block; }
+.feedback-meta-value { font-family: 'Space Grotesk', Arial, sans-serif; font-size: 14px; font-weight: 600; color: #1E293B; letter-spacing: -0.01em; }
+.feedback-card { padding: 20px 22px; }
+.feedback-q {
+  display: block; font-family: 'Space Grotesk', Arial, sans-serif; font-size: 15px; font-weight: 600;
+  letter-spacing: -0.015em; color: #0C1228; margin-bottom: 14px; line-height: 1.4;
+}
+.likert { display: flex; gap: 8px; flex-wrap: wrap; }
+.likert-btn {
+  width: 44px; height: 40px; border-radius: 6px; cursor: pointer;
+  background: #fff; border: 1.5px solid #E0E8F4;
+  font-family: 'JetBrains Mono', 'Courier New', monospace; font-size: 13px; font-weight: 500; color: #64748B;
+  transition: background 0.12s, border-color 0.12s, color 0.12s;
+}
+.likert-btn:hover { background: #F5F8FF; border-color: rgba(27,79,216,0.25); }
+.likert-btn.active { background: #3B82F6; border-color: #3B82F6; color: #fff; }
+.choice-row { display: flex; gap: 8px; flex-wrap: wrap; }
+.choice-btn {
+  padding: 9px 16px; border-radius: 20px; cursor: pointer;
+  background: #fff; border: 1.5px solid #E0E8F4;
+  font-family: 'Space Grotesk', Arial, sans-serif; font-size: 13px; font-weight: 500; letter-spacing: -0.01em; color: #64748B;
+  transition: background 0.12s, border-color 0.12s, color 0.12s;
+}
+.choice-btn:hover { background: #F5F8FF; border-color: rgba(27,79,216,0.25); color: #1E293B; }
+.choice-btn.active { background: #3B82F6; border-color: #3B82F6; color: #fff; }
