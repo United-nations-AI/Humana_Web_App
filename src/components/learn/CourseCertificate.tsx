@@ -21,15 +21,53 @@ export default function CourseCertificate({ course }: { course: Course }) {
   const [downloaded, setDownloaded] = useState(() => !!getProgress(course.id).certificateDownloaded);
   const [feedbackDone, setFeedbackDone] = useState(() => !!getProgress(course.id).feedbackSubmittedAt);
 
-  const download = () => {
-    const unlock = () => {
-      markCertificateDownloaded(course.id);
-      setDownloaded(true);
-      window.removeEventListener("afterprint", unlock);
-      setTimeout(() => document.getElementById("feedback")?.scrollIntoView({ behavior: "smooth" }), 300);
-    };
-    window.addEventListener("afterprint", unlock);
-    window.print();
+  const [busy, setBusy] = useState(false);
+
+  const unlockFeedback = () => {
+    markCertificateDownloaded(course.id);
+    setDownloaded(true);
+    setTimeout(() => document.getElementById("feedback")?.scrollIntoView({ behavior: "smooth" }), 400);
+  };
+
+  /* Builds the PDF in the browser from an off-screen, fixed-size (A4 landscape) copy of the
+     certificate, so phones and desktops all get the same single-page landscape file.
+     Falls back to the browser print dialog if rendering fails. */
+  const download = async () => {
+    if (busy || !claim) return;
+    setBusy(true);
+    let host: HTMLDivElement | null = null;
+    try {
+      const [{ default: html2canvas }, { jsPDF }] = await Promise.all([import("html2canvas"), import("jspdf")]);
+      const src = document.querySelector<HTMLElement>(".certificate");
+      if (!src) throw new Error("certificate not rendered");
+      const clone = src.cloneNode(true) as HTMLElement;
+      clone.classList.add("cert-export");
+      host = document.createElement("div");
+      host.className = "cert-stage cert-stage--export";
+      host.style.cssText = "position:fixed;left:-20000px;top:0;width:1123px;height:794px;background:#fff;overflow:hidden;";
+      host.appendChild(clone);
+      document.body.appendChild(host);
+      await document.fonts?.ready;
+      await Promise.all(Array.from(clone.querySelectorAll("img")).map(img =>
+        img.complete ? Promise.resolve() : new Promise<void>(r => { img.onload = () => r(); img.onerror = () => r(); })));
+      const canvas = await html2canvas(clone, {
+        scale: 2, backgroundColor: "#ffffff", useCORS: true, logging: false,
+        width: 1123, height: 794, windowWidth: 1123, windowHeight: 794,
+      });
+      const pdf = new jsPDF({ orientation: "landscape", unit: "mm", format: "a4", compress: true });
+      pdf.setProperties({ title: `Certificate of Completion — ${claim.name}`, subject: course.title, author: "Humana AI · Qatar CPD" });
+      pdf.addImage(canvas.toDataURL("image/jpeg", 0.94), "JPEG", 0, 0, 297, 210);
+      pdf.save(`Humana-AI-Certificate-${claim.certificateId}.pdf`);
+      unlockFeedback();
+    } catch (e) {
+      console.warn("[certificate] PDF generation failed, falling back to print:", e);
+      const onAfter = () => { window.removeEventListener("afterprint", onAfter); unlockFeedback(); };
+      window.addEventListener("afterprint", onAfter);
+      window.print();
+    } finally {
+      host?.remove();
+      setBusy(false);
+    }
   };
 
   // The certificate renders only from a server-verified token issued after a passing quiz.
@@ -69,8 +107,8 @@ export default function CourseCertificate({ course }: { course: Course }) {
             </div>
             <div style={{ display:"flex", gap:8, flexWrap:"wrap" }}>
               <Link href="/learn" className="btn-outline" style={{ fontSize:13, padding:"10px 16px" }}>More Courses</Link>
-              <button onClick={download} className="btn-primary" style={{ fontSize:13, padding:"10px 18px" }}>
-                Download / Print PDF
+              <button onClick={download} disabled={busy} className="btn-primary" style={{ fontSize:13, padding:"10px 18px", opacity: busy ? 0.6 : 1 }}>
+                {busy ? "Preparing PDF…" : "Download PDF"}
               </button>
             </div>
           </div>
@@ -79,6 +117,7 @@ export default function CourseCertificate({ course }: { course: Course }) {
 
       <section style={{ background:"#F5F8FF", padding:"40px 0 64px" }} className="cert-section">
         <div className="wrap">
+          <div className="cert-stage">
           <div className="certificate">
             <div className="cert-border">
               <div className="cert-head">
@@ -125,9 +164,10 @@ export default function CourseCertificate({ course }: { course: Course }) {
               <div className="cert-serial">Certificate No. {claim.certificateId}</div>
             </div>
           </div>
+          </div>
 
           <p className="mono-label no-print" style={{ color:"#A8BEDB", textAlign:"center", marginTop:20 }}>
-            Use your browser&apos;s print dialog and choose &quot;Save as PDF&quot; · Landscape orientation recommended
+            Download PDF saves a single-page A4 landscape certificate · Works on phones and desktops
           </p>
         </div>
       </section>

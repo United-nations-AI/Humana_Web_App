@@ -1981,71 +1981,86 @@ body {
   padding-bottom: 8px; border-bottom: 1px solid #E0E8F4;
 }
 
-/* ─── Certificate ─── */
+/* ─── Certificate ───
+   All sizes are relative to the certificate's own width (cqw), never the screen,
+   so the on-screen view, the generated PDF and the print view all render identically. */
+.cert-stage { container-type: inline-size; max-width: 960px; margin: 0 auto; }
 .certificate {
-  max-width: 960px; margin: 0 auto; aspect-ratio: 1.414 / 1;
-  background: #fff; background-size: cover; background-position: center;
-  border-radius: 6px; padding: 22px;
+  width: 100%; aspect-ratio: 1.414 / 1;
+  background: #fff; border-radius: 6px; padding: 2.3cqw;
   box-shadow: rgba(6,14,43,0.14) 0 16px 48px;
 }
 .cert-border {
-  height: 100%; display: flex; flex-direction: column; justify-content: space-between;
-  border: 1.5px solid #1B4FD8; outline: 1px solid rgba(27,79,216,0.25); outline-offset: 5px;
-  padding: clamp(18px, 4vw, 44px);
+  position: relative; height: 100%; display: flex; flex-direction: column; justify-content: space-between;
+  border: 1.5px solid #1B4FD8; padding: clamp(18px, 6cqw, 44px);
   background:
     radial-gradient(circle at 0% 0%, rgba(59,130,246,0.06), transparent 40%),
     radial-gradient(circle at 100% 100%, rgba(59,130,246,0.06), transparent 40%);
 }
+.cert-border::before { content: ""; position: absolute; inset: -6px; border: 1px solid rgba(27,79,216,0.25); pointer-events: none; }
 .cert-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
-.cert-brand { font-family: 'Space Grotesk', Arial, sans-serif; font-size: 16px; font-weight: 700; letter-spacing: -0.03em; color: #1E293B; line-height: 1.1; }
-.cert-brand-sub, .cert-id, .cert-foot-label, .cert-eyebrow, .cert-detail {
+.cert-brand { font-family: 'Space Grotesk', Arial, sans-serif; font-size: clamp(12px, 1.7cqw, 16px); font-weight: 700; letter-spacing: -0.03em; color: #1E293B; line-height: 1.1; }
+.cert-brand-sub, .cert-foot-label, .cert-eyebrow, .cert-detail {
   font-family: 'JetBrains Mono', 'Courier New', monospace; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase;
 }
-.cert-brand-sub { font-size: 9px; color: #64748B; margin-top: 3px; }
-.cert-id { font-size: 9px; color: #A8BEDB; }
+.cert-brand-sub { font-size: clamp(7px, 0.95cqw, 9px); color: #64748B; margin-top: 3px; }
 .cert-body { text-align: center; padding: 8px 0; }
-.cert-eyebrow { font-size: clamp(9px, 1.2vw, 12px); color: #1B4FD8; margin-bottom: clamp(10px, 2vw, 22px); }
-.cert-presented { font-family: 'Space Grotesk', Arial, sans-serif; font-size: clamp(11px, 1.4vw, 14px); color: #64748B; letter-spacing: -0.01em; }
+.cert-eyebrow { font-size: clamp(9px, 1.25cqw, 12px); color: #1B4FD8; margin-bottom: clamp(10px, 2.3cqw, 22px); }
+.cert-presented { font-family: 'Space Grotesk', Arial, sans-serif; font-size: clamp(11px, 1.5cqw, 14px); color: #64748B; letter-spacing: -0.01em; }
 .cert-name {
   font-family: 'Space Grotesk', Arial, sans-serif; font-weight: 700; letter-spacing: -0.04em; line-height: 1.05;
-  font-size: clamp(26px, 5vw, 52px); color: #0C1228; margin: clamp(6px, 1.2vw, 14px) 0;
+  font-size: clamp(26px, 5.4cqw, 52px); color: #0C1228; margin: clamp(6px, 1.5cqw, 14px) 0 clamp(12px, 2.2cqw, 22px);
   overflow-wrap: anywhere;
 }
-.cert-rule { width: 120px; height: 2px; background: #1B4FD8; margin: 0 auto clamp(8px, 1.5vw, 16px); border-radius: 2px; }
+.cert-rule { width: clamp(80px, 12.5cqw, 120px); height: 2px; background: #1B4FD8; margin: 0 auto clamp(8px, 1.7cqw, 16px); border-radius: 2px; }
 .cert-course {
   font-family: 'Space Grotesk', Arial, sans-serif; font-weight: 600; letter-spacing: -0.03em; line-height: 1.15;
-  font-size: clamp(16px, 2.6vw, 28px); color: #1E293B; margin: clamp(4px, 1vw, 10px) 0;
+  font-size: clamp(16px, 2.9cqw, 28px); color: #1E293B; margin: clamp(4px, 1cqw, 10px) 0;
 }
-.cert-detail { font-size: clamp(8px, 1vw, 10px); color: #A8BEDB; letter-spacing: 0.08em; margin-top: 6px; }
+.cert-detail { font-size: clamp(8px, 1.05cqw, 10px); color: #A8BEDB; letter-spacing: 0.08em; margin-top: 6px; }
 .cert-foot { display: flex; justify-content: space-between; align-items: flex-end; gap: 12px; }
-.cert-sig-line { width: clamp(100px, 18vw, 180px); height: 1px; background: #1E293B; margin-bottom: 8px; }
-.cert-foot-label { font-size: 8px; color: #A8BEDB; margin-bottom: 3px; }
-.cert-foot-value { font-family: 'Space Grotesk', Arial, sans-serif; font-size: clamp(10px, 1.3vw, 13px); font-weight: 600; color: #1E293B; letter-spacing: -0.01em; }
-.cert-seal { flex-shrink: 0; }
-.cert-logo { width: clamp(38px, 6.2vw, 60px); height: clamp(38px, 6.2vw, 60px); object-fit: contain; border-radius: 8px; }
-.cert-seal-img { display: block; width: clamp(60px, 9.6vw, 98px); height: clamp(60px, 9.6vw, 98px); object-fit: contain; margin: 0 auto 2px; }
-.cert-signature {
-  display: block; margin: 0 auto -8px; height: clamp(40px, 6vw, 68px); width: auto; max-width: 200px; object-fit: contain;
-}
-.cert-foot { align-items: flex-end; }
 .cert-foot-col { text-align: center; flex: 1 1 0; min-width: 0; }
-.cert-foot-col .cert-sig-line { margin-left: auto; margin-right: auto; }
-.cert-date { font-size: clamp(13px, 1.7vw, 18px); font-weight: 700; color: #0C1228; letter-spacing: -0.02em; margin-top: 2px; }
+.cert-sig-line { width: clamp(100px, 19cqw, 180px); height: 1px; background: #1E293B; margin: 0 auto 8px; }
+.cert-foot-label { font-size: clamp(7px, 0.85cqw, 8px); color: #A8BEDB; margin-bottom: 3px; }
+.cert-foot-value { font-family: 'Space Grotesk', Arial, sans-serif; font-size: clamp(10px, 1.35cqw, 13px); font-weight: 600; color: #1E293B; letter-spacing: -0.01em; }
+.cert-date { font-size: clamp(16px, 2.4cqw, 23px); font-weight: 700; color: #0C1228; letter-spacing: -0.025em; margin-top: 4px; line-height: 1.1; }
+.cert-logo { width: clamp(38px, 6.25cqw, 60px); height: clamp(38px, 6.25cqw, 60px); object-fit: contain; border-radius: 8px; }
+.cert-seal-img { display: block; width: clamp(60px, 10.2cqw, 98px); height: clamp(60px, 10.2cqw, 98px); object-fit: contain; margin: 0 auto 2px; }
+.cert-signature { display: block; margin: 0 auto -8px; height: clamp(40px, 7cqw, 68px); width: auto; max-width: 200px; object-fit: contain; }
 .cert-serial {
-  text-align: center; margin-top: clamp(10px, 1.6vw, 18px);
-  font-family: 'JetBrains Mono', 'Courier New', monospace; font-size: clamp(8px, 1vw, 10px); font-weight: 500;
+  text-align: center; margin-top: clamp(10px, 1.9cqw, 18px);
+  font-family: 'JetBrains Mono', 'Courier New', monospace; font-size: clamp(8px, 1.05cqw, 10px); font-weight: 500;
   letter-spacing: 0.12em; text-transform: uppercase; color: #A8BEDB;
 }
 
-/* Print: certificate only, landscape */
+/* Narrow certificates (phones): stack the header and footer instead of clipping.
+   A container query, so the off-screen PDF clone (always 1123px wide) is never affected. */
+@container (max-width: 640px) {
+  .certificate { aspect-ratio: auto; }
+  .cert-border { gap: 22px; }
+  .cert-head { flex-wrap: wrap; justify-content: center; text-align: center; gap: 14px; }
+  .cert-foot { flex-direction: column; align-items: center; text-align: center; gap: 18px; }
+  .cert-foot-col { width: 100%; }
+}
+
+/* Off-screen clone used to generate the PDF: fixed A4-landscape pixel size (96 dpi) */
+.cert-stage--export { width: 1123px; max-width: none; margin: 0; }
+.cert-export { width: 1123px !important; height: 794px !important; aspect-ratio: auto; margin: 0; border-radius: 0; box-shadow: none; }
+
+/* Print (Ctrl+P fallback): one A4 landscape page, certificate only */
 @media print {
-  @page { size: A4 landscape; margin: 10mm; }
-  body { background: #fff; }
+  @page { size: A4 landscape; margin: 0; }
+  html, body { margin: 0; padding: 0; background: #fff; }
   .nav-bar, .footer, .no-print { display: none !important; }
   .cert-section { padding: 0 !important; background: #fff !important; }
   .cert-section .wrap { padding: 0; max-width: none; }
-  .certificate { max-width: none; box-shadow: none; border-radius: 0; padding: 0; height: 100vh; }
-  .cert-border { border-color: #1B4FD8; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .cert-stage { max-width: none; width: 297mm; margin: 0; }
+  .certificate {
+    width: 297mm; height: 210mm; aspect-ratio: auto;
+    margin: 0; padding: 8mm; border-radius: 0; box-shadow: none;
+    break-inside: avoid; page-break-inside: avoid;
+  }
+  .cert-border { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
 }
 
 /* ─── Learning platform: catalog feature card, upcoming, outcomes ─── */
@@ -2085,16 +2100,6 @@ body {
   transition: background 0.12s;
 }
 .learn-ext-link:hover { background: #EEF2FF; }
-
-/* Certificate on narrow screens: let the frame grow instead of clipping (desktop/print unchanged) */
-@media (max-width: 640px) {
-  .certificate { aspect-ratio: auto; padding: 14px; }
-  .cert-border { gap: 22px; }
-  .cert-head { flex-wrap: wrap; justify-content: center; text-align: center; gap: 14px; }
-  .cert-foot { flex-direction: column; align-items: center; text-align: center; gap: 18px; }
-  .cert-foot-col { width: 100%; }
-  .cert-sig-line { margin-left: auto; margin-right: auto; }
-}
 
 /* ─── Admin dashboard ─── */
 .admin-tiles { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
