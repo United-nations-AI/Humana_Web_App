@@ -26,7 +26,7 @@ export interface Course {
   title: string;
   tag: string;            // short pill label e.g. "Foundations"
   level: "Beginner" | "Intermediate" | "Advanced";
-  duration: string;       // e.g. "2 Hours" — printed on the certificate
+  duration: string;       // e.g. "1.5 Hours" — printed on the certificate
   summary: string;        // one-liner for the catalog card
   description: string;    // longer text on the course page
   outcomes: string[];     // "What you will learn" bullets
@@ -59,6 +59,8 @@ export interface CourseProgress {
   certificateId?: string;
   /** server-issued token (claim + signature); the only thing that unlocks the certificate page */
   certToken?: string;
+  /** seconds of each lesson's video actually played (lessonId → seconds); gates "Mark complete" */
+  watched?: Record<string, number>;
   /** set once the learner has used Download / Print — unlocks the feedback form */
   certificateDownloaded?: boolean;
   /** epoch ms when the post-course feedback form was submitted */

@@ -13,33 +13,33 @@ export const QUIZ_ANSWERS: Record<string, Record<string, number>> = {
   "foundations-of-human-rights": {
     q01: 1,
     q02: 2,
-    q03: 1,
+    q03: 3,
     q04: 3,
     q05: 2,
-    q06: 0,
+    q06: 3,
     q07: 0,
-    q08: 1,
+    q08: 0,
     q09: 2,
-    q10: 1,
-    q11: 0,
-    q12: 0,
+    q10: 2,
+    q11: 3,
+    q12: 3,
     q13: 0,
-    q14: 0,
+    q14: 1,
     q15: 1,
     q16: 0,
-    q17: 0,
+    q17: 3,
     q18: 0,
-    q19: 0,
-    q20: 0,
-    q21: 0,
-    q22: 0,
+    q19: 1,
+    q20: 2,
+    q21: 2,
+    q22: 1,
     q23: 0,
-    q24: 0,
-    q25: 0,
+    q24: 2,
+    q25: 2,
     q26: 0,
-    q27: 0,
-    q28: 0,
-    q29: 0,
+    q27: 3,
+    q28: 1,
+    q29: 1,
     q30: 0,
   },
 };
@@ -84,8 +84,8 @@ export interface GradeResult {
   score: number;
   passed: boolean;
   band: ResultBand;
-  /** Correct option per question — revealed only after a full submission has been graded. */
-  key: Record<string, number>;
+  /** Score per module, so learners know which modules to revisit. Correct answers are never returned. */
+  modules: { moduleId: string; correct: number; total: number }[];
   token?: string;
   claim?: CertificateClaim;
 }
@@ -118,16 +118,23 @@ export function gradeSubmission(input: {
 
   const answers = (input.answers && typeof input.answers === "object") ? input.answers as Record<string, unknown> : {};
   let correct = 0;
+  const perModule = new Map<string, { correct: number; total: number }>();
   for (const q of course.quiz) {
     const a = answers[q.id];
     if (typeof a !== "number") return { ok: false, status: 400, error: "Answer every question before submitting" };
-    if (a === key[q.id]) correct++;
+    const m = perModule.get(q.moduleId) ?? { correct: 0, total: 0 };
+    m.total++;
+    if (a === key[q.id]) { correct++; m.correct++; }
+    perModule.set(q.moduleId, m);
   }
 
   const total  = course.quiz.length;
   const score  = correct / total;
   const passed = score >= course.passMark;
-  const result: GradeResult = { ok: true, total, correct, score, passed, band: bandFor(score, course.passMark), key: { ...key } };
+  const result: GradeResult = {
+    ok: true, total, correct, score, passed, band: bandFor(score, course.passMark),
+    modules: course.modules.map(m => ({ moduleId: m.id, ...(perModule.get(m.id) ?? { correct: 0, total: 0 }) })),
+  };
 
   if (passed) {
     const claim: CertificateClaim = {

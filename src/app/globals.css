@@ -2156,3 +2156,15 @@ body {
 }
 .choice-btn:hover { background: #F5F8FF; border-color: rgba(27,79,216,0.25); color: #1E293B; }
 .choice-btn.active { background: #3B82F6; border-color: #3B82F6; color: #fff; }
+
+/* ─── Learning platform: locked modules, viewing meter, per-module quiz results ─── */
+.syllabus-lesson.locked { cursor: not-allowed; opacity: 0.55; }
+.syllabus-lesson.locked:hover { background: transparent; }
+.syllabus-lesson.locked .syllabus-check { color: #A8BEDB; background: #F5F8FF; }
+.watch-meter { margin-top: 14px; padding: 12px 14px; background: #F5F8FF; border: 1px solid #E0E8F4; border-radius: 8px; }
+.progress-fill.done { background: linear-gradient(90deg, #22c55e, #16A34A); }
+.module-score { display: flex; flex-wrap: wrap; align-items: center; gap: 16px; padding: 16px 20px; }
+.module-score.needs { border-color: rgba(245,158,11,0.4); background: rgba(245,158,11,0.04); }
+.module-score-num {
+  font-family: 'Space Grotesk', Arial, sans-serif; font-size: 20px; font-weight: 700; letter-spacing: -0.03em; color: #0C1228; min-width: 52px; text-align: right;
+}

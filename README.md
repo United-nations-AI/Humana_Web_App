@@ -94,7 +94,7 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 - **Language switcher** — English, العربية (RTL), Français, Español, 中文, हिन्दी
 - **Chat history** — threads saved to localStorage, grouped by date
 - **No login required** — fully anonymous, free for everyone
-- **Learning platform** — video courses split into modules, progress tracking, a 30-question final questionnaire (80% pass mark), and a printable certificate. Answer keys stay server-side; certificates are HMAC-signed so they cannot be forged from the browser.
+- **Learning platform** — video courses split into modules that unlock in order, each requiring 90% of the video to be played before it can be completed; a 30-question final questionnaire (80% pass mark, shuffled options, no answer reveal — learners are sent back to the modules they missed); and a downloadable PDF certificate. Answer keys stay server-side; certificates are HMAC-signed so they cannot be forged from the browser.
 
 ---
 

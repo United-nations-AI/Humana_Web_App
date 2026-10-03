@@ -3,21 +3,42 @@ import { useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import type { Course, CourseProgress } from "@/types/learn";
-import { allLessons, getYouTubeId, youTubeWatchUrl, hasQuiz } from "@/lib/courses";
+import { allLessons, getYouTubeId, hasQuiz } from "@/lib/courses";
 import { getLearnerName, setLearnerName, getProgress, markLessonComplete } from "@/lib/learn-storage";
 import NameModal from "./NameModal";
+import LessonVideo from "./LessonVideo";
+
+const LockIcon = () => (
+  <svg width="10" height="11" viewBox="0 0 12 13" fill="none" aria-hidden="true">
+    <rect x="1.5" y="5.5" width="9" height="6.5" rx="1.5" stroke="currentColor" strokeWidth="1.3"/>
+    <path d="M3.5 5.5V4a2.5 2.5 0 015 0v1.5" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round"/>
+  </svg>
+);
 
 export default function CoursePlayer({ course }: { course: Course }) {
   const router  = useRouter();
   const lessons = useMemo(() => allLessons(course), [course]);
-  // Client-only component (loaded with ssr:false) — safe to read localStorage in initialisers
+  // Client-only component (loaded with ssr:false) — safe to read localStorage / location in initialisers
   const [name, setName]         = useState(() => getLearnerName());
   const [progress, setProgress] = useState<CourseProgress>(() => getProgress(course.id));
   const [activeId, setActiveId] = useState<string>(() => {
     const done = getProgress(course.id).completedLessons;
-    return (lessons.find(l => !done.includes(l.id)) ?? lessons[0])?.id;   // resume at first incomplete
+    const firstOpen = lessons.find(l => !done.includes(l.id)) ?? lessons[0];
+    // ?module=<id> (used by the questionnaire's "review" links) opens that module if it is unlocked
+    const wanted = new URLSearchParams(window.location.search).get("module");
+    const target = course.modules.find(m => m.id === wanted)?.lessons[0];
+    if (target) {
+      const idx = lessons.findIndex(l => l.id === target.id);
+      if (idx === 0 || done.includes(lessons[idx - 1].id)) return target.id;
+    }
+    return firstOpen?.id;
   });
+  const [eligible, setEligible]       = useState<Record<string, boolean>>({});
   const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  const isComplete = (id: string) => progress.completedLessons.includes(id);
+  // Modules unlock strictly in order: a lesson opens only when the one before it is complete.
+  const isUnlocked = (idx: number) => idx === 0 || isComplete(lessons[idx - 1].id);
 
   const active     = lessons.find(l => l.id === activeId) ?? lessons[0];
   const activeIdx  = lessons.findIndex(l => l.id === active?.id);
@@ -27,13 +48,19 @@ export default function CoursePlayer({ course }: { course: Course }) {
   const pct        = total ? Math.round((done / total) * 100) : 0;
   const allDone    = total > 0 && done >= total;
   const quizReady  = hasQuiz(course);
-  const isComplete = (id: string) => progress.completedLessons.includes(id);
   const videoId    = getYouTubeId(active?.videoUrl ?? "");
-  const watchUrl   = youTubeWatchUrl(active?.videoUrl ?? "");
   const passPct    = Math.round(course.passMark * 100);
+  const activeDone = isComplete(active?.id ?? "");
+  const canComplete = activeDone || !!eligible[active?.id ?? ""];
+
+  const open = (idx: number) => {
+    if (idx < 0 || idx >= total || !isUnlocked(idx)) return;
+    setActiveId(lessons[idx].id);
+    setSidebarOpen(false);
+  };
 
   const complete = () => {
-    if (!active) return;
+    if (!active || !canComplete) return;
     setProgress(markLessonComplete(course.id, active.id));
     if (activeIdx < total - 1) setActiveId(lessons[activeIdx + 1].id);
   };
@@ -84,16 +111,18 @@ export default function CoursePlayer({ course }: { course: Course }) {
                   {m.lessons.map(l => {
                     const idx = lessons.findIndex(x => x.id === l.id);
                     const isActive = l.id === active?.id;
+                    const locked = !isUnlocked(idx);
                     return (
-                      <button key={l.id} onClick={() => { setActiveId(l.id); setSidebarOpen(false); }}
-                        className={`syllabus-lesson${isActive ? " active" : ""}${isComplete(l.id) ? " done" : ""}`}>
+                      <button key={l.id} onClick={() => open(idx)} disabled={locked}
+                        title={locked ? "Complete the previous module to unlock" : undefined}
+                        className={`syllabus-lesson${isActive ? " active" : ""}${isComplete(l.id) ? " done" : ""}${locked ? " locked" : ""}`}>
                         <span className="syllabus-check">
                           {isComplete(l.id)
                             ? <svg width="10" height="10" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#fff" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/></svg>
-                            : <span>{idx + 1}</span>}
+                            : locked ? <LockIcon /> : <span>{idx + 1}</span>}
                         </span>
                         <span className="syllabus-lesson-title">Video {idx + 1}</span>
-                        <span className="syllabus-duration">{isComplete(l.id) ? "Done" : isActive ? "Now" : ""}</span>
+                        <span className="syllabus-duration">{isComplete(l.id) ? "Done" : locked ? "Locked" : isActive ? "Now" : ""}</span>
                       </button>
                     );
                   })}
@@ -122,16 +151,15 @@ export default function CoursePlayer({ course }: { course: Course }) {
 
             {/* Main */}
             <div style={{ minWidth:0 }}>
-              <div className="video-frame">
-                {videoId ? (
-                  <iframe
-                    key={videoId}
-                    src={`https://www.youtube-nocookie.com/embed/${videoId}?rel=0&modestbranding=1`}
-                    title={active?.title}
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowFullScreen
-                  />
-                ) : (
+              {videoId && active ? (
+                <LessonVideo
+                  key={active.id}
+                  courseId={course.id} lessonId={active.id} videoId={videoId} title={active.title}
+                  alreadyComplete={activeDone}
+                  onEligible={() => setEligible(e => ({ ...e, [active.id]: true }))}
+                />
+              ) : (
+                <div className="video-frame">
                   <div className="video-placeholder">
                     <svg width="40" height="40" viewBox="0 0 24 24" fill="none">
                       <rect x="2" y="5" width="20" height="14" rx="3" stroke="currentColor" strokeWidth="1.5"/>
@@ -139,40 +167,36 @@ export default function CoursePlayer({ course }: { course: Course }) {
                     </svg>
                     <span className="mono-label">Video unavailable</span>
                   </div>
-                )}
-              </div>
+                </div>
+              )}
 
-              <div style={{ display:"flex", flexWrap:"wrap", justifyContent:"space-between", alignItems:"flex-start", gap:16, marginTop:24 }}>
+              <div style={{ display:"flex", flexWrap:"wrap", justifyContent:"space-between", alignItems:"flex-start", gap:16, marginTop:20 }}>
                 <div style={{ minWidth:0, flex:"1 1 320px" }}>
                   <div className="mono-label" style={{ color:"#64748B", marginBottom:8 }}>
                     Module {activeMod + 1} of {course.modules.length} · Video {activeIdx + 1}
                   </div>
                   <h2 className="heading-3" style={{ fontSize:22, color:"#0C1228", marginBottom:8 }}>{active?.title}</h2>
                   {course.modules[activeMod]?.description && (
-                    <p className="body-text" style={{ fontSize:14, color:"#64748B", marginBottom:10 }}>{course.modules[activeMod].description}</p>
-                  )}
-                  {watchUrl && (
-                    <a href={watchUrl} target="_blank" rel="noopener noreferrer" className="learn-ext-link">
-                      <svg width="12" height="12" viewBox="0 0 16 16" fill="none"><path d="M6 3H3.5A1.5 1.5 0 002 4.5v8A1.5 1.5 0 003.5 14h8a1.5 1.5 0 001.5-1.5V10M9 2h5v5M14 2L7 9" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/></svg>
-                      Watch on YouTube
-                    </a>
+                    <p className="body-text" style={{ fontSize:14, color:"#64748B" }}>{course.modules[activeMod].description}</p>
                   )}
                 </div>
 
                 <div style={{ display:"flex", gap:8, flexWrap:"wrap" }}>
-                  <button onClick={() => activeIdx > 0 && setActiveId(lessons[activeIdx - 1].id)} disabled={activeIdx === 0}
+                  <button onClick={() => open(activeIdx - 1)} disabled={activeIdx === 0}
                     className="btn-outline" style={{ fontSize:13, padding:"10px 16px", opacity: activeIdx === 0 ? 0.4 : 1 }}>
                     ← Previous
                   </button>
-                  {isComplete(active?.id ?? "") ? (
+                  {activeDone ? (
                     activeIdx < total - 1
-                      ? <button onClick={() => setActiveId(lessons[activeIdx + 1].id)} className="btn-primary" style={{ fontSize:13, padding:"10px 18px" }}>Next Module →</button>
+                      ? <button onClick={() => open(activeIdx + 1)} className="btn-primary" style={{ fontSize:13, padding:"10px 18px" }}>Next Module →</button>
                       : quizReady
                         ? <Link href={`/learn/${course.id}/quiz`} className="btn-primary" style={{ fontSize:13, padding:"10px 18px" }}>Go to Questionnaire →</Link>
                         : null
                   ) : (
-                    <button onClick={complete} className="btn-primary" style={{ fontSize:13, padding:"10px 18px" }}>
-                      Mark Complete {activeIdx < total - 1 ? "& Continue →" : "✓"}
+                    <button onClick={complete} disabled={!canComplete} className="btn-primary"
+                      title={canComplete ? undefined : "Watch the video to unlock this button"}
+                      style={{ fontSize:13, padding:"10px 18px", opacity: canComplete ? 1 : 0.45, cursor: canComplete ? "pointer" : "not-allowed" }}>
+                      {canComplete ? `Mark Complete ${activeIdx < total - 1 ? "& Continue →" : "✓"}` : "Watch the video to continue"}
                     </button>
                   )}
                 </div>

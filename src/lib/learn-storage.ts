@@ -64,6 +64,16 @@ export function recordQuizResult(
   return p;
 }
 
+export function saveWatched(courseId: string, lessonId: string, seconds: number): void {
+  const p = getProgress(courseId);
+  const prev = p.watched?.[lessonId] ?? 0;
+  if (seconds > prev) { p.watched = { ...(p.watched ?? {}), [lessonId]: Math.round(seconds) }; saveProgress(courseId, p); }
+}
+
+export function getWatched(courseId: string, lessonId: string): number {
+  return getProgress(courseId).watched?.[lessonId] ?? 0;
+}
+
 export function markCertificateDownloaded(courseId: string): CourseProgress {
   const p = getProgress(courseId);
   if (!p.certificateDownloaded) { p.certificateDownloaded = true; saveProgress(courseId, p); }
