@@ -62,7 +62,7 @@ export const COURSES: Course[] = [
         title: "Becoming a Human Rights Advocate",
         description: "Responsible advocacy, active listening, community initiatives, and applying human rights principles in everyday life.",
         lessons: [
-          { id: "module-4-video", title: "Becoming a Human Rights Advocate", videoUrl: "https://youtu.be/OUexd9x98mk" },
+          { id: "module-4-video", title: "Becoming a Human Rights Advocate", videoUrl: "https://youtu.be/-KLa4NeOvDc" },
         ],
       },
     ],
