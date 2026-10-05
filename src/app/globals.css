@@ -2026,6 +2026,13 @@ body {
 .cert-date { font-size: clamp(16px, 2.4cqw, 23px); font-weight: 700; color: #0C1228; letter-spacing: -0.025em; margin-top: 4px; line-height: 1.1; }
 .cert-logo { width: clamp(38px, 6.25cqw, 60px); height: clamp(38px, 6.25cqw, 60px); object-fit: contain; border-radius: 8px; }
 .cert-seal-img { display: block; width: clamp(60px, 10.2cqw, 98px); height: clamp(60px, 10.2cqw, 98px); object-fit: contain; margin: 0 auto 2px; }
+.cert-logo-placeholder {
+  display: flex; align-items: center; justify-content: center; text-align: center;
+  width: clamp(60px, 10.2cqw, 98px); height: clamp(60px, 10.2cqw, 98px); margin: 0 auto 6px;
+  border: 1.5px dashed #A8BEDB; border-radius: 8px; background: #F5F8FF;
+  font-family: 'JetBrains Mono', 'Courier New', monospace; font-size: clamp(7px, 1.05cqw, 10px); font-weight: 500;
+  letter-spacing: 0.1em; line-height: 1.5; text-transform: uppercase; color: #64748B;
+}
 .cert-signature { display: block; margin: 0 auto -8px; height: clamp(40px, 7cqw, 68px); width: auto; max-width: 200px; object-fit: contain; }
 .cert-serial {
   text-align: center; margin-top: clamp(10px, 1.9cqw, 18px);
