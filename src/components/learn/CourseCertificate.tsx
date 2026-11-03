@@ -11,6 +11,7 @@ const LOGOS = {
   humana: "/humanahi-logo.png",
   qcpd:   "/certificate/qcpd-logo.jpg",
   signature: "/certificate/signature.png",
+  cpd:       "/certificate/cpd-certified.png",   // CPD Certified badge (accreditation no. 900304, 16/10/2026), white background
 };
 
 export default function CourseCertificate({ course }: { course: Course }) {
@@ -154,9 +155,7 @@ export default function CourseCertificate({ course }: { course: Course }) {
                   <div className="cert-foot-value">Qatar Centre for Peace and Democracy</div>
                 </div>
                 <div className="cert-foot-col">
-                  {/* CPD accreditation pending: placeholder until the official logo may be used.
-                      To restore: <img src="/certificate/cpd-member.png" alt="CPD Member" className="cert-seal-img" /> */}
-                  <div className="cert-logo-placeholder" role="img" aria-label="CPD logo placeholder">CPD LOGO<br />HERE</div>
+                  <img src={LOGOS.cpd} alt="CPD Certified — The CPD Certification Service" className="cert-cpd-badge" />
                   <div className="cert-sig-line" />
                   <div className="cert-foot-label">Issued by</div>
                   <div className="cert-foot-value">Humana AI · Qatar CPD</div>
