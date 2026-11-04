@@ -145,6 +145,14 @@ Five video modules (Understanding Communities; Equality and Inclusion; Preventin
 
 Five video modules (International Human Rights Law; International Human Rights Framework; National Human Rights Institutions; Courts, Justice and Accountability; Human Rights Defenders), 1.5 hours, 30-question final questionnaire (80% pass mark). Same rules as the other courses.
 
+## Course 4 — Human Rights in the Digital Age: Technology, Privacy and Artificial Intelligence
+
+Five video modules (Digital Rights and Human Rights; Privacy and Personal Data; Artificial Intelligence and Ethics; Online Safety and Responsible Digital Citizenship; The Future of Human Rights and Technology), 2 hours, 30-question final questionnaire (80% pass mark). Same rules as the other courses.
+
+## Course 5 — Human Rights Leadership: Advocacy, Communication and Positive Change
+
+Five video modules (Principles of Human Rights Leadership; Communication and Public Engagement; Advocacy and Influencing Change; Project Planning and Community Leadership; Creating Sustainable Positive Change), 2.5 hours, 30-question final questionnaire (80% pass mark). Same rules as the other courses.
+
 ## Adding or Editing Courses
 
 1. Add the course, modules, lessons (YouTube links) and questions in `src/lib/courses.ts`. Questions carry no answers.

@@ -23,6 +23,8 @@ export interface QuizQuestion {
 
 export interface Course {
   id: string;             // used in the URL: /learn/[id]
+  /** short code for certificate serials (HAI-<code>-…); defaults to the first 3 letters of the id */
+  code?: string;
   title: string;
   tag: string;            // short pill label e.g. "Foundations"
   level: "Beginner" | "Intermediate" | "Advanced";
