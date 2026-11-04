@@ -141,6 +141,10 @@ CPD Certified by The CPD Certification Service, certificate no. 900304, 16 Octob
 
 Five video modules (Understanding Communities; Equality and Inclusion; Preventing Discrimination; Resolving Community Challenges; Building a Human Rights Culture), 1.5 hours, 30-question final questionnaire (80% pass mark). Same rules as Course 1: modules unlock in order, each video must be watched before it can be marked complete, options are shuffled per attempt and answers are never revealed.
 
+## Course 3 — Protecting Human Rights: International Law and Institutions
+
+Five video modules (International Human Rights Law; International Human Rights Framework; National Human Rights Institutions; Courts, Justice and Accountability; Human Rights Defenders), 1.5 hours, 30-question final questionnaire (80% pass mark). Same rules as the other courses.
+
 ## Adding or Editing Courses
 
 1. Add the course, modules, lessons (YouTube links) and questions in `src/lib/courses.ts`. Questions carry no answers.

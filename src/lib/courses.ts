@@ -193,6 +193,99 @@ export const COURSES: Course[] = [
       { id: "q30", moduleId: "module-5", question: "After completing this course, learners should be able to:", options: ["Resolve every community dispute independently", "Replace legal institutions", "Promote inclusion, recognise discrimination and contribute positively to their communities", "Eliminate all disagreements"] },
     ],
   },
+  {
+    id: "protecting-human-rights",
+    title: "Protecting Human Rights: International Law and Institutions",
+    tag: "International Law",
+    level: "Beginner",
+    duration: "1.5 Hours",
+    summary:
+      "How human rights are protected in practice: international human rights law, the United Nations mechanisms, national human rights institutions, the rule of law and accountability, and the role of human rights defenders.",
+    description:
+      "Protecting Human Rights: International Law and Institutions explains the legal framework and the institutions that turn human rights principles into protection. You will learn what international human rights law is and the principles of universality and indivisibility behind it, how the United Nations promotes and monitors human rights through the Human Rights Council, Special Rapporteurs and treaty bodies, what National Human Rights Institutions and independent oversight bodies do, why the rule of law, judicial independence and access to justice matter, and how human rights defenders and partnerships between civil society and public institutions help protect rights for everyone.",
+    outcomes: [
+      "Explain the purpose of international human rights law, the Universal Declaration and the principles of universality and indivisibility",
+      "Describe how the United Nations human rights mechanisms, including treaty monitoring bodies and Special Rapporteurs, promote accountability",
+      "Explain the role and independence of National Human Rights Institutions and oversight bodies in protecting rights at home",
+      "Understand the rule of law, judicial independence, access to justice and fair hearings as foundations of accountability",
+      "Describe how human rights defenders and partnerships between civil society and institutions strengthen protection",
+    ],
+    passMark: 0.8,
+    modules: [
+      {
+        id: "module-1",
+        title: "International Human Rights Law",
+        description: "The purpose of international human rights law, the Universal Declaration, treaties, and the principles of universality and indivisibility.",
+        lessons: [
+          { id: "module-1-video", title: "International Human Rights Law", videoUrl: "https://www.youtube.com/watch?v=2VXNTQhHPM4" },
+        ],
+      },
+      {
+        id: "module-2",
+        title: "International Human Rights Framework",
+        description: "The United Nations, OHCHR, the Human Rights Council, Special Rapporteurs, treaty monitoring bodies and State reporting.",
+        lessons: [
+          { id: "module-2-video", title: "International Human Rights Framework", videoUrl: "https://www.youtube.com/watch?v=Ka90qXRNeXM" },
+        ],
+      },
+      {
+        id: "module-3",
+        title: "National Human Rights Institutions",
+        description: "What National Human Rights Institutions do, why independence matters, and how public institutions and oversight bodies protect rights.",
+        lessons: [
+          { id: "module-3-video", title: "National Human Rights Institutions", videoUrl: "https://www.youtube.com/watch?v=jgFk-ex8Dts" },
+        ],
+      },
+      {
+        id: "module-4",
+        title: "Courts, Justice and Accountability",
+        description: "The rule of law, judicial independence, access to justice, fair hearings and why accountability protects human rights.",
+        lessons: [
+          { id: "module-4-video", title: "Courts, Justice and Accountability", videoUrl: "https://www.youtube.com/watch?v=W6LGX86Fq-o" },
+        ],
+      },
+      {
+        id: "module-5",
+        title: "Human Rights Defenders",
+        description: "Human rights defenders, effective and peaceful advocacy, and partnerships between civil society, communities and public institutions.",
+        lessons: [
+          { id: "module-5-video", title: "Human Rights Defenders", videoUrl: "https://www.youtube.com/watch?v=zj5MBoCN6o0" },
+        ],
+      },
+    ],
+    quiz: [
+      { id: "q01", moduleId: "module-1", question: "What is the primary purpose of international human rights law?", options: ["To regulate international trade", "To govern military alliances", "To establish standards for protecting the rights and freedoms of all people", "To replace national constitutions"] },
+      { id: "q02", moduleId: "module-1", question: "The Universal Declaration of Human Rights (UDHR) was adopted in:", options: ["1919", "1945", "1948", "1966"] },
+      { id: "q03", moduleId: "module-1", question: "The Universal Declaration of Human Rights was adopted by the:", options: ["International Court of Justice", "United Nations General Assembly", "European Parliament", "International Criminal Court"] },
+      { id: "q04", moduleId: "module-1", question: "International human rights treaties are designed to:", options: ["Create legally binding obligations for States that choose to become parties to them", "Replace all national laws", "Govern international trade", "Eliminate national courts"] },
+      { id: "q05", moduleId: "module-1", question: "Which statement best describes the principle of universality?", options: ["Human rights apply only to citizens.", "Human rights vary according to wealth.", "Human rights apply only in democratic countries.", "Human rights belong equally to every person."] },
+      { id: "q06", moduleId: "module-1", question: "Human rights are often described as indivisible because:", options: ["Governments may choose only one category of rights.", "They are intended to be enjoyed together and should not be separated into more or less important rights.", "Only civil rights are important.", "Economic rights can replace political rights."] },
+      { id: "q07", moduleId: "module-1", question: "Which category includes the right to education?", options: ["Economic, social and cultural rights", "Military rights", "Commercial rights", "Electoral rights only"] },
+      { id: "q08", moduleId: "module-2", question: "Which organisation has the primary global responsibility for promoting international human rights?", options: ["World Trade Organization", "International Monetary Fund", "G7", "United Nations"] },
+      { id: "q09", moduleId: "module-2", question: "The Office of the United Nations High Commissioner for Human Rights (OHCHR) primarily works to:", options: ["Conduct military operations", "Manage international trade", "Promote and protect internationally recognised human rights", "Regulate banking"] },
+      { id: "q10", moduleId: "module-2", question: "The Human Rights Council is responsible for:", options: ["Promoting dialogue and addressing human rights issues through international cooperation", "Approving national budgets", "Conducting criminal trials", "Supervising elections"] },
+      { id: "q11", moduleId: "module-2", question: "A Special Rapporteur is generally:", options: ["A judge of the International Court of Justice", "An independent expert appointed to examine or report on specific human rights themes or country situations", "A government minister", "A police investigator"] },
+      { id: "q12", moduleId: "module-2", question: "Treaty monitoring bodies generally:", options: ["Replace domestic courts", "Draft national legislation", "Collect taxes", "Review how participating States implement their treaty obligations"] },
+      { id: "q13", moduleId: "module-2", question: "Periodic reporting by States helps to:", options: ["Promote accountability and dialogue regarding treaty implementation", "Replace elections", "Eliminate national governments", "Conduct criminal investigations"] },
+      { id: "q14", moduleId: "module-2", question: "International cooperation on human rights is intended to:", options: ["Replace national sovereignty", "Prevent legal reform", "Encourage States to improve respect for human rights through dialogue and shared commitments", "Eliminate domestic institutions"] },
+      { id: "q15", moduleId: "module-3", question: "A National Human Rights Institution (NHRI) is generally established to:", options: ["Replace parliament", "Promote and protect human rights within a country", "Manage elections", "Supervise businesses"] },
+      { id: "q16", moduleId: "module-3", question: "One important function of many NHRIs is to:", options: ["Control national budgets", "Conduct military operations", "Approve court judgments", "Educate the public about human rights"] },
+      { id: "q17", moduleId: "module-3", question: "An independent NHRI is expected to:", options: ["Support only government policies", "Represent private companies", "Operate impartially and independently of improper influence", "Promote one political party"] },
+      { id: "q18", moduleId: "module-3", question: "Human rights education is important because it:", options: ["Helps individuals understand their rights and responsibilities", "Eliminates all legal disputes", "Replaces formal education", "Prevents public discussion"] },
+      { id: "q19", moduleId: "module-3", question: "Public institutions contribute to protecting human rights by:", options: ["Ignoring complaints", "Acting fairly, transparently and consistently with the law", "Restricting public participation unnecessarily", "Preventing access to information"] },
+      { id: "q20", moduleId: "module-3", question: "Which principle strengthens confidence in public institutions?", options: ["Secrecy", "Discrimination", "Exclusion", "Accountability"] },
+      { id: "q21", moduleId: "module-3", question: "Independent oversight bodies contribute to good governance by:", options: ["Monitoring compliance with laws and standards", "Replacing courts", "Conducting elections", "Managing political parties"] },
+      { id: "q22", moduleId: "module-4", question: "The rule of law means that:", options: ["Governments are above the law", "Laws apply only to citizens", "Everyone, including public authorities, is subject to the law", "Judges create laws without limits"] },
+      { id: "q23", moduleId: "module-4", question: "Judicial independence helps ensure that:", options: ["Governments control judicial outcomes", "Courts can make decisions fairly and without improper influence", "Judges follow political instructions", "Courts replace legislatures"] },
+      { id: "q24", moduleId: "module-4", question: "Access to justice generally means:", options: ["Only lawyers may use the courts", "Courts should hear only criminal cases", "Legal rights apply only to businesses", "People should have fair opportunities to seek legal remedies through appropriate procedures"] },
+      { id: "q25", moduleId: "module-4", question: "A fair hearing generally includes:", options: ["An impartial decision-maker and an opportunity for each party to present their case", "Secret evidence only", "Automatic conviction", "Decisions without explanation"] },
+      { id: "q26", moduleId: "module-4", question: "Accountability contributes to human rights protection because it:", options: ["Eliminates judicial review", "Prevents public participation", "Encourages individuals and institutions to act responsibly and answer for their actions", "Reduces transparency"] },
+      { id: "q27", moduleId: "module-5", question: "A human rights defender is generally understood to be:", options: ["Only a lawyer", "A person who peacefully promotes or protects human rights", "Only a government official", "Only a judge"] },
+      { id: "q28", moduleId: "module-5", question: "Effective human rights advocacy should be based on:", options: ["Personal attacks", "Rumours", "Misinformation", "Accurate information, respect for others and peaceful engagement"] },
+      { id: "q29", moduleId: "module-5", question: "Partnerships between civil society, communities and public institutions can:", options: ["Strengthen efforts to promote and protect human rights", "Prevent public participation", "Eliminate independent organisations", "Replace democratic institutions"] },
+      { id: "q30", moduleId: "module-5", question: "After completing this course, learners should be able to:", options: ["Replace international courts", "Draft international treaties independently", "Explain the role of international human rights law, institutions and accountability mechanisms in protecting human rights", "Eliminate all human rights violations"] },
+    ],
+  },
 ];
 
 export function getCourse(id: string): Course | undefined {
