@@ -105,7 +105,7 @@ export const COURSES: Course[] = [
     title: "Human Rights in Communities: Building Respect, Inclusion and Equality",
     tag: "Communities",
     level: "Beginner",
-    duration: "1 Hour",
+    duration: "1.5 Hours",
     summary:
       "How communities work, what equality and inclusion mean in practice, how to recognise and prevent discrimination, how to resolve community challenges, and how to build a culture of human rights.",
     description:

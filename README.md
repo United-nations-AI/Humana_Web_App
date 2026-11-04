@@ -139,7 +139,7 @@ CPD Certified by The CPD Certification Service, certificate no. 900304, 16 Octob
 
 ## Course 2 — Human Rights in Communities: Building Respect, Inclusion and Equality
 
-Five video modules (Understanding Communities; Equality and Inclusion; Preventing Discrimination; Resolving Community Challenges; Building a Human Rights Culture), 1 hour, 30-question final questionnaire (80% pass mark). Same rules as Course 1: modules unlock in order, each video must be watched before it can be marked complete, options are shuffled per attempt and answers are never revealed.
+Five video modules (Understanding Communities; Equality and Inclusion; Preventing Discrimination; Resolving Community Challenges; Building a Human Rights Culture), 1.5 hours, 30-question final questionnaire (80% pass mark). Same rules as Course 1: modules unlock in order, each video must be watched before it can be marked complete, options are shuffled per attempt and answers are never revealed.
 
 ## Adding or Editing Courses
 
