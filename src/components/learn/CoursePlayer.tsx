@@ -73,8 +73,9 @@ export default function CoursePlayer({ course }: { course: Course }) {
           <div style={{ display:"flex", flexWrap:"wrap", justifyContent:"space-between", alignItems:"flex-end", gap:16 }}>
             <div style={{ minWidth:0 }}>
               <Link href="/learn" className="learn-back">← All courses</Link>
-              <div style={{ display:"flex", gap:10, alignItems:"center", marginTop:10, marginBottom:8 }}>
+              <div style={{ display:"flex", gap:10, alignItems:"center", flexWrap:"wrap", marginTop:10, marginBottom:8 }}>
                 <span className="tag">{course.tag}</span>
+                {course.accreditation && <span className="tag tag--cpd" title={`Certified by ${course.accreditation.body}, ${course.accreditation.certifiedOn}`}>CPD Certified · No. {course.accreditation.certificateNumber}</span>}
                 <span className="mono-label" style={{ color:"#A8BEDB" }}>{course.level} · {course.duration}</span>
               </div>
               <h1 className="heading-2" style={{ color:"#0C1228" }}>{course.title}</h1>

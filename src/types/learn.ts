@@ -27,6 +27,8 @@ export interface Course {
   tag: string;            // short pill label e.g. "Foundations"
   level: "Beginner" | "Intermediate" | "Advanced";
   duration: string;       // e.g. "1.5 Hours" — printed on the certificate
+  /** Accreditation details, shown on the course and printed on the certificate */
+  accreditation?: { body: string; certificateNumber: string; certifiedOn: string };
   summary: string;        // one-liner for the catalog card
   description: string;    // longer text on the course page
   outcomes: string[];     // "What you will learn" bullets
@@ -34,12 +36,6 @@ export interface Course {
   quiz: QuizQuestion[];
   /** fraction required to pass, e.g. 0.9 */
   passMark: number;
-}
-
-export interface UpcomingCourse {
-  title: string;
-  tag: string;
-  summary: string;
 }
 
 /** Signed by the server after a passing quiz; required to render a certificate. */

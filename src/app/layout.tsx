@@ -24,6 +24,8 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://www.humanarights.com"),
+  alternates: { canonical: "/" },
   title: "Humana AI — Human Rights AI for Everyone",
   description:
     "Humana AI is a free, globally accessible human rights AI assistant. Ask questions about your rights, international law, and humanitarian issues — no login required.",
@@ -33,6 +35,8 @@ export const metadata: Metadata = {
     title: "Humana AI — Human Rights AI for Everyone",
     description: "Free AI-powered human rights assistant for the world.",
     type: "website",
+    url: "https://www.humanarights.com",
+    siteName: "Humana AI",
   },
 };
 

@@ -2068,6 +2068,7 @@ body {
 }
 
 /* ─── Learning platform: catalog feature card, upcoming, outcomes ─── */
+.course-feature + .course-feature { margin-top: 24px; }
 .course-feature {
   display: grid; grid-template-columns: 1fr; gap: 28px; padding: 28px 24px;
 }
@@ -2088,7 +2089,6 @@ body {
   font-family: 'Space Grotesk', Arial, sans-serif; font-size: 14px; font-weight: 500;
   letter-spacing: -0.01em; color: #1E293B;
 }
-.course-upcoming { opacity: 0.9; background: #fff; }
 .course-outcomes { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
 .course-outcomes li {
   display: flex; gap: 10px; align-items: flex-start;
@@ -2172,3 +2172,6 @@ body {
 .module-score-num {
   font-family: 'Space Grotesk', Arial, sans-serif; font-size: 20px; font-weight: 700; letter-spacing: -0.03em; color: #0C1228; min-width: 52px; text-align: right;
 }
+
+/* CPD accreditation marker */
+.tag--cpd { background: rgba(64,45,123,0.08); border-color: rgba(64,45,123,0.25); color: #402D7B; }

@@ -161,7 +161,10 @@ export default function CourseCertificate({ course }: { course: Course }) {
                   <div className="cert-foot-value">Humana AI · Qatar CPD</div>
                 </div>
               </div>
-              <div className="cert-serial">Certificate No. {claim.certificateId}</div>
+              <div className="cert-serial">
+                Certificate No. {claim.certificateId}
+                {course.accreditation && <> · CPD Certified Course No. {course.accreditation.certificateNumber}</>}
+              </div>
             </div>
           </div>
           </div>

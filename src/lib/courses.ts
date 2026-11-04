@@ -1,4 +1,4 @@
-import type { Course, Lesson, UpcomingCourse } from "@/types/learn";
+import type { Course, Lesson } from "@/types/learn";
 
 /* ────────────────────────────────────────────────────────────────────────────
    Course catalogue (public data — no quiz answers here).
@@ -17,14 +17,15 @@ export const LEARN_INTRO = {
 export const COURSES: Course[] = [
   {
     id: "foundations-of-human-rights",
-    title: "Foundations of Human Rights",
+    title: "Foundations of Human Rights: Understanding Your Rights and Responsibilities",
     tag: "Foundations",
     level: "Beginner",
     duration: "1.5 Hours",
+    accreditation: { body: "The CPD Certification Service", certificateNumber: "900304", certifiedOn: "16 October 2026" },
     summary:
       "The foundations of human rights: what they are, the international framework that protects them, the responsibilities that come with them, and how to promote them.",
     description:
-      "Foundations of Human Rights introduces the core ideas every person should know. You will learn what human rights are and the principles of dignity, equality and universality behind them, how the Universal Declaration and international treaties form the foundation of international human rights, how rights go hand in hand with responsibilities and participation, and how to become a responsible advocate for human rights in everyday life.",
+      "Foundations of Human Rights: Understanding Your Rights and Responsibilities introduces the core ideas every person should know. You will learn what human rights are and the principles of dignity, equality and universality behind them, how the Universal Declaration and international treaties form the foundation of international human rights, how rights go hand in hand with responsibilities and participation, and how to become a responsible advocate for human rights in everyday life.",
     outcomes: [
       "Explain what human rights are and how dignity, equality and universality apply in everyday life",
       "Describe the Universal Declaration, international treaties, and what States are expected to do",
@@ -99,12 +100,99 @@ export const COURSES: Course[] = [
       { id: "q30", moduleId: "module-4", question: "After completing this course, participants are encouraged to:", options: ["Apply human rights principles respectfully in their daily lives and communities.", "Keep the information private.", "Ignore community issues.", "Avoid further learning."] },
     ],
   },
-];
-
-export const UPCOMING_COURSES: UpcomingCourse[] = [
-  { tag: "International Law", title: "Refugee and Asylum Rights",          summary: "The 1951 Refugee Convention, non-refoulement, and the rights of people seeking protection." },
-  { tag: "Advocacy",          title: "Reporting Human Rights Violations",  summary: "Documenting abuses safely and bringing them to national, regional, and UN mechanisms." },
-  { tag: "Treaties",          title: "The International Covenants",        summary: "A closer look at the ICCPR and ICESCR and how states are held to account." },
+  {
+    id: "human-rights-in-communities",
+    title: "Human Rights in Communities: Building Respect, Inclusion and Equality",
+    tag: "Communities",
+    level: "Beginner",
+    duration: "1 Hour",
+    summary:
+      "How communities work, what equality and inclusion mean in practice, how to recognise and prevent discrimination, how to resolve community challenges, and how to build a culture of human rights.",
+    description:
+      "Human Rights in Communities: Building Respect, Inclusion and Equality looks at how human rights are lived out where people actually meet: neighbourhoods, workplaces, schools and online. You will learn what makes a community and why diversity strengthens it, what equality, inclusion and accessibility require in practice, how to recognise discrimination and harassment and the steps that help prevent them, how constructive dialogue and participation resolve community challenges, and how everyday leadership builds a lasting culture of human rights.",
+    outcomes: [
+      "Describe what a community is and explain why diversity and social inclusion strengthen it",
+      "Explain equality, inclusion and accessibility, and recognise how unconscious bias influences decisions",
+      "Recognise discrimination and harassment and identify practical steps to prevent and respond to them",
+      "Use constructive dialogue, participation and volunteering to help resolve community challenges",
+      "Contribute to a culture of human rights through empathy, respectful challenge and inclusive leadership",
+    ],
+    passMark: 0.8,
+    modules: [
+      {
+        id: "module-1",
+        title: "Understanding Communities",
+        description: "What a community is, why diversity and social inclusion matter, and what builds community cohesion.",
+        lessons: [
+          { id: "module-1-video", title: "Understanding Communities", videoUrl: "https://www.youtube.com/watch?v=oFAmU8Gj7I4" },
+        ],
+      },
+      {
+        id: "module-2",
+        title: "Equality and Inclusion",
+        description: "Equality, inclusion and accessibility in practice, unconscious bias, and respecting cultural diversity.",
+        lessons: [
+          { id: "module-2-video", title: "Equality and Inclusion", videoUrl: "https://www.youtube.com/watch?v=2l9kIULLRV8" },
+        ],
+      },
+      {
+        id: "module-3",
+        title: "Preventing Discrimination",
+        description: "What discrimination and harassment are, what contributes to them, and how education and fair treatment prevent them.",
+        lessons: [
+          { id: "module-3-video", title: "Preventing Discrimination", videoUrl: "https://www.youtube.com/watch?v=yrltW1MPA2Y" },
+        ],
+      },
+      {
+        id: "module-4",
+        title: "Resolving Community Challenges",
+        description: "Constructive dialogue, conflict resolution, community participation and the value of volunteering.",
+        lessons: [
+          { id: "module-4-video", title: "Resolving Community Challenges", videoUrl: "https://www.youtube.com/watch?v=iFCbU1kwRHQ" },
+        ],
+      },
+      {
+        id: "module-5",
+        title: "Building a Human Rights Culture",
+        description: "Everyday respect for dignity, inclusive leadership, challenging stereotypes, and contributing positively to your community.",
+        lessons: [
+          { id: "module-5-video", title: "Building a Human Rights Culture", videoUrl: "https://www.youtube.com/watch?v=iHMW1jFXjy0" },
+        ],
+      },
+    ],
+    quiz: [
+      { id: "q01", moduleId: "module-1", question: "A community is best described as:", options: ["Only people who live in the same country", "A group of people connected by location, interests, identity, work, education, or shared experiences", "Only members of one religion", "A political organisation"] },
+      { id: "q02", moduleId: "module-1", question: "Healthy communities are strengthened by:", options: ["Cooperation and mutual respect", "Exclusion of minority groups", "Discrimination", "Isolation"] },
+      { id: "q03", moduleId: "module-1", question: "Why is diversity valuable within a community?", options: ["It prevents cooperation", "It reduces equality", "It encourages different perspectives, ideas and experiences", "It limits innovation"] },
+      { id: "q04", moduleId: "module-1", question: "Social inclusion means:", options: ["Only selected groups can participate", "People should remain separated", "Communities should avoid differences", "Everyone has the opportunity to participate fully in society"] },
+      { id: "q05", moduleId: "module-1", question: "Which action best promotes community cohesion?", options: ["Encouraging respectful dialogue among different groups", "Spreading stereotypes", "Ignoring community concerns", "Preventing public participation"] },
+      { id: "q06", moduleId: "module-1", question: "Communities benefit when people:", options: ["Refuse to cooperate", "Exclude newcomers", "Respect different backgrounds and viewpoints", "Promote hostility"] },
+      { id: "q07", moduleId: "module-1", question: "A person's identity may include:", options: ["Culture", "Language", "Religion", "All of the above"] },
+      { id: "q08", moduleId: "module-2", question: "Equality means:", options: ["Everyone must be identical", "Every person deserves equal dignity, respect and protection under the law", "Everyone must have identical opinions", "Governments choose who deserves equality"] },
+      { id: "q09", moduleId: "module-2", question: "Inclusion is achieved when:", options: ["Certain groups are excluded", "Only majority opinions matter", "Participation is restricted", "Everyone has opportunities to participate without unjustified barriers"] },
+      { id: "q10", moduleId: "module-2", question: "Accessibility helps ensure:", options: ["People with disabilities can participate equally", "Buildings become more expensive", "Fewer people participate", "Only professionals can enter public buildings"] },
+      { id: "q11", moduleId: "module-2", question: "Which example demonstrates inclusive behaviour?", options: ["Refusing reasonable adjustments", "Ignoring communication barriers", "Providing information in accessible formats", "Preventing participation"] },
+      { id: "q12", moduleId: "module-2", question: "Unconscious bias refers to:", options: ["Criminal behaviour", "Automatic assumptions that may influence decisions without our awareness", "Government policy", "International law"] },
+      { id: "q13", moduleId: "module-2", question: "One effective way to reduce bias is to:", options: ["Reflect on personal assumptions and seek diverse perspectives", "Ignore other viewpoints", "Avoid meeting new people", "Depend entirely on stereotypes"] },
+      { id: "q14", moduleId: "module-2", question: "Respecting cultural diversity means:", options: ["Rejecting all differences", "Promoting only one culture", "Preventing cultural expression", "Valuing different traditions while respecting universal human dignity"] },
+      { id: "q15", moduleId: "module-3", question: "Discrimination occurs when:", options: ["People express opinions respectfully", "Laws are discussed publicly", "A person is treated unfairly because of characteristics such as race, religion, disability or other protected characteristics", "Communities celebrate diversity"] },
+      { id: "q16", moduleId: "module-3", question: "Harassment is:", options: ["Friendly discussion", "Unwanted behaviour that creates an intimidating, hostile or offensive environment", "Community volunteering", "Constructive criticism"] },
+      { id: "q17", moduleId: "module-3", question: "Which of the following may contribute to discrimination?", options: ["Stereotyping individuals or groups", "Respectful communication", "Inclusive education", "Equal opportunities"] },
+      { id: "q18", moduleId: "module-3", question: "Which action can help prevent discrimination?", options: ["Ignoring complaints", "Excluding minorities", "Promoting prejudice", "Providing equal opportunities and fair treatment"] },
+      { id: "q19", moduleId: "module-3", question: "If someone experiences discrimination, an appropriate first step may include:", options: ["Remaining silent because nothing can change", "Responding with violence", "Seeking advice through appropriate organisational or legal procedures", "Spreading false information"] },
+      { id: "q20", moduleId: "module-3", question: "Education plays an important role in reducing discrimination because it:", options: ["Encourages prejudice", "Increases understanding and awareness", "Creates division", "Prevents cooperation"] },
+      { id: "q21", moduleId: "module-3", question: "Respectful workplaces and schools are characterised by:", options: ["Bullying", "Exclusion", "Intimidation", "Fair treatment and equal opportunity"] },
+      { id: "q22", moduleId: "module-3", question: "Which statement is most accurate?", options: ["Everyone has a role in creating respectful and inclusive communities.", "Only governments can promote equality.", "Communities cannot influence discrimination.", "Human rights apply only in workplaces."] },
+      { id: "q23", moduleId: "module-4", question: "When disagreements occur, constructive dialogue involves:", options: ["Interrupting others", "Refusing compromise", "Listening respectfully and seeking understanding", "Personal attacks"] },
+      { id: "q24", moduleId: "module-4", question: "Conflict resolution is most successful when people:", options: ["Ignore concerns", "Focus on solving problems rather than blaming individuals", "Escalate disagreements", "Refuse communication"] },
+      { id: "q25", moduleId: "module-4", question: "Community participation helps solve local challenges by:", options: ["Encouraging cooperation and shared responsibility", "Preventing public involvement", "Excluding stakeholders", "Limiting discussion"] },
+      { id: "q26", moduleId: "module-4", question: "Volunteering contributes to communities because it:", options: ["Increases inequality", "Reduces cooperation", "Discourages participation", "Supports positive social development"] },
+      { id: "q27", moduleId: "module-5", question: "A culture of human rights is strengthened when:", options: ["Communities encourage discrimination", "Only governments discuss human rights", "People consistently respect the dignity and rights of others", "Citizens ignore public issues"] },
+      { id: "q28", moduleId: "module-5", question: "Which leadership quality best supports inclusive communities?", options: ["Intolerance", "Empathy", "Prejudice", "Exclusion"] },
+      { id: "q29", moduleId: "module-5", question: "One important way individuals can promote equality is by:", options: ["Challenging stereotypes respectfully and supporting inclusion", "Ignoring discrimination", "Excluding others", "Sharing misinformation"] },
+      { id: "q30", moduleId: "module-5", question: "After completing this course, learners should be able to:", options: ["Resolve every community dispute independently", "Replace legal institutions", "Promote inclusion, recognise discrimination and contribute positively to their communities", "Eliminate all disagreements"] },
+    ],
+  },
 ];
 
 export function getCourse(id: string): Course | undefined {

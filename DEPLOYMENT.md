@@ -115,7 +115,7 @@ Open the `.vercel.app` preview URL that Vercel assigns. Test:
 See [Section 5](#5-wiring-a-hostinger-domain) for Hostinger DNS steps, then:
 
 1. Vercel Dashboard → Project → **Settings → Domains**.
-2. Enter your domain (e.g. `humanai.org`).
+2. Enter your domain (e.g. `humanarights.com`).
 3. Vercel shows you a `CNAME` or `A` record — copy it.
 4. Add that record in Hostinger (see Section 5).
 5. Vercel auto-provisions an SSL certificate via Let's Encrypt within minutes.
@@ -360,7 +360,7 @@ And the deploy step should upload the full directory including `.next`.
 
 App Service → **Custom domains** → **Add custom domain**:
 
-1. Enter your domain (e.g. `humanai.org`).
+1. Enter your domain (e.g. `humanarights.com`).
 2. Azure shows you a `TXT` record (for verification) and a `CNAME` or `A` record.
 3. Add both in Hostinger (Section 5).
 4. Once DNS propagates, click **Validate** → **Add**.

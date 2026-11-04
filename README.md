@@ -133,6 +133,14 @@ scripts/
 
 ---
 
+## Course 1 — Foundations of Human Rights: Understanding Your Rights and Responsibilities
+
+CPD Certified by The CPD Certification Service, certificate no. 900304, 16 October 2026. Four video modules, 1.5 hours, 30-question final questionnaire (80% pass mark).
+
+## Course 2 — Human Rights in Communities: Building Respect, Inclusion and Equality
+
+Five video modules (Understanding Communities; Equality and Inclusion; Preventing Discrimination; Resolving Community Challenges; Building a Human Rights Culture), 1 hour, 30-question final questionnaire (80% pass mark). Same rules as Course 1: modules unlock in order, each video must be watched before it can be marked complete, options are shuffled per attempt and answers are never revealed.
+
 ## Adding or Editing Courses
 
 1. Add the course, modules, lessons (YouTube links) and questions in `src/lib/courses.ts`. Questions carry no answers.
@@ -151,6 +159,10 @@ Every graded questionnaire is recorded in the Supabase table `learn_assessments`
 - Never commit `.env.local`. Rotate `LEARN_CERT_SECRET` if it is ever exposed (existing certificates will stop verifying).
 
 ---
+
+## Live Site
+
+https://www.humanarights.com
 
 ## Powered by Qatar CPD
 

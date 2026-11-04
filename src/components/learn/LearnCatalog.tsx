@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { COURSES, UPCOMING_COURSES, LEARN_INTRO, countLessons, hasQuiz } from "@/lib/courses";
+import { COURSES, LEARN_INTRO, countLessons, hasQuiz } from "@/lib/courses";
 import { getLearnerName, setLearnerName, getAllProgress } from "@/lib/learn-storage";
 import type { CourseProgress } from "@/types/learn";
 import NameModal from "./NameModal";
@@ -78,8 +78,8 @@ export default function LearnCatalog() {
       <section id="courses" className="section-pad" style={{ background:"#fff" }}>
         <div className="wrap">
           <div style={{ marginBottom:40 }}>
-            <div className="label-xs" style={{ color:"#1B4FD8", marginBottom:14 }}>Available Now</div>
-            <h2 className="heading-2" style={{ color:"#0C1228", maxWidth:520 }}>Start Your First Course</h2>
+            <div className="label-xs" style={{ color:"#1B4FD8", marginBottom:14 }}>Available Now · {COURSES.length} Courses</div>
+            <h2 className="heading-2" style={{ color:"#0C1228", maxWidth:520 }}>Choose a Course</h2>
           </div>
 
           {COURSES.map(c => {
@@ -92,8 +92,9 @@ export default function LearnCatalog() {
             return (
               <div key={c.id} className="card course-feature">
                 <div style={{ minWidth:0 }}>
-                  <div style={{ display:"flex", gap:10, alignItems:"center", marginBottom:16 }}>
+                  <div style={{ display:"flex", gap:10, alignItems:"center", flexWrap:"wrap", marginBottom:16 }}>
                     <span className="tag">{c.tag}</span>
+                    {c.accreditation && <span className="tag tag--cpd">CPD Certified · No. {c.accreditation.certificateNumber}</span>}
                     <span className="mono-label" style={{ color:"#A8BEDB" }}>{c.level}</span>
                   </div>
                   <h3 className="heading-3" style={{ fontSize:26, color:"#0C1228", marginBottom:12 }}>{c.title}</h3>
@@ -138,31 +139,6 @@ export default function LearnCatalog() {
               </div>
             );
           })}
-        </div>
-      </section>
-
-      {/* Upcoming */}
-      <section style={{ background:"#F5F8FF", borderTop:"1px solid #E0E8F4", borderBottom:"1px solid #E0E8F4" }} className="section-pad">
-        <div className="wrap">
-          <div style={{ marginBottom:36 }}>
-            <div className="label-xs" style={{ color:"#1B4FD8", marginBottom:14 }}>Coming Soon</div>
-            <h2 className="heading-2" style={{ color:"#0C1228", maxWidth:520, marginBottom:12 }}>Upcoming Courses</h2>
-            <p className="body-text" style={{ fontSize:15, color:"#64748B", maxWidth:560 }}>
-              New courses are being prepared to go deeper into specific areas of human rights and international law.
-            </p>
-          </div>
-          <div className="grid-principles">
-            {UPCOMING_COURSES.map(u => (
-              <div key={u.title} className="card course-upcoming">
-                <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", gap:10, marginBottom:16 }}>
-                  <span className="tag">{u.tag}</span>
-                  <span className="mono-label" style={{ color:"#A8BEDB" }}>Coming soon</span>
-                </div>
-                <h3 className="heading-3" style={{ fontSize:17, color:"#0C1228", marginBottom:8 }}>{u.title}</h3>
-                <p className="body-text" style={{ fontSize:14, color:"#64748B" }}>{u.summary}</p>
-              </div>
-            ))}
-          </div>
         </div>
       </section>
 
