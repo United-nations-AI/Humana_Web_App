@@ -155,7 +155,10 @@ export default function CourseCertificate({ course }: { course: Course }) {
                   <div className="cert-foot-value">Qatar Centre for Peace and Democracy</div>
                 </div>
                 <div className="cert-foot-col">
-                  <img src={LOGOS.cpd} alt="CPD Certified — The CPD Certification Service" className="cert-cpd-badge" />
+                  {course.accreditation
+                    ? <img src={LOGOS.cpd} alt="CPD Certified — The CPD Certification Service" className="cert-cpd-badge" />
+                    : /* CPD accreditation pending for this course: placeholder until approval is granted */
+                      <div className="cert-logo-placeholder" role="img" aria-label="CPD logo placeholder">CPD LOGO<br />HERE</div>}
                   <div className="cert-sig-line" />
                   <div className="cert-foot-label">Issued by</div>
                   <div className="cert-foot-value">Humana AI · Qatar CPD</div>
